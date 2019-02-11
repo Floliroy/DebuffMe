@@ -1,0 +1,27 @@
+<GuiXml>
+	<Controls>
+		<TopLevelControl name="DebuffMeAlert" mouseEnabled="false" movable="false" hidden="false" clampedToScreen="true" >
+			<Dimensions x="900" y="500" />
+			<Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" />
+			
+			<OnMoveStop>
+				DebuffMe.SaveLoc()
+			</OnMoveStop>
+
+			<Controls>
+				<Label name="$(parent)Taunt" text="TAUNT" color="FFFFFF" inheritAlpha="true" font="$(BOLD_FONT)|$(KB_36)|soft-shadow-thick" verticalAlignment="CENTER" horizontalAlignment="CENTER" >
+					<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$(parent)"/>
+				</Label>
+				<Label name="$(parent)Alkosh" text="AL" color="00AAFF" inheritAlpha="true" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" verticalAlignment="CENTER" horizontalAlignment="CENTER" >
+					<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$(parent)Taunt" offsetX="-110" offsetY="10"/>
+				</Label>
+				<Label name="$(parent)Crusher" text="CR" color="38C300" inheritAlpha="true" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" verticalAlignment="CENTER" horizontalAlignment="CENTER" >
+					<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$(parent)Taunt" offsetY="-60"/>
+				</Label>
+                <Label name="$(parent)EngFlames" text="EF" color="EC3C00" inheritAlpha="true" font="$(BOLD_FONT)|$(KB_40)|soft-shadow-thick" verticalAlignment="CENTER" horizontalAlignment="CENTER" >
+					<Anchor point="CENTER" relativePoint="CENTER" relativeTo="$(parent)Taunt" offsetX="110" offsetY="10"/>
+				</Label>
+			</Controls>
+		</TopLevelControl>
+	</Controls>
+</GuiXml>
