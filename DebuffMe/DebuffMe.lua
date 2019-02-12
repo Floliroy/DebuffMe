@@ -170,12 +170,12 @@ end
 function DebuffMe.Calcul(Debuff_Choice)
     local currentTimeStamp = GetGameTimeMilliseconds() / 1000
     local Timer = 0
-    local TimerTXT = ""
-
+	local TimerTXT = ""
+	
     for i=1,GetNumBuffs("reticleover") do --Verif temps debuff
 		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)		
 		if(zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == DebuffMe.DebuffList[Debuff_Choice]) then
-            Timer = timeEnding - currentTimeStamp
+			Timer = timeEnding - currentTimeStamp
 		end
     end
 
@@ -192,7 +192,6 @@ function DebuffMe.Calcul(Debuff_Choice)
             TimerTXT = tostring(string.format("%.1f", Timer)) 
         end
     end
-
     return TimerTXT
 end
 
@@ -203,9 +202,11 @@ function DebuffMe.Update()
     if (IsUnitInCombat("player")) then
 
         local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("reticleover", POWERTYPE_HEALTH)
-        local TXT = ""
-    
-        if maxTargetHP >= 1000000 then
+		local TXT = ""
+		
+		DebuffMeAlert:SetHidden(false)
+
+        if maxTargetHP >= 0 then
             if DebuffMe.Debuff_M ~= 1 then
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_M)
                 DebuffMeAlertMiddle:SetText(TXT)
