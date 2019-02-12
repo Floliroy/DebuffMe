@@ -241,7 +241,7 @@ function DebuffMe.Update()
             DebuffMeAlert:SetHidden(true)
         end
     else
-        HowToBeamAlert:SetHidden(not DebuffMe.savedVariables.AlwaysShowAlert)
+        DebuffMeAlert:SetHidden(not DebuffMe.savedVariables.AlwaysShowAlert)
     end
 end
 
