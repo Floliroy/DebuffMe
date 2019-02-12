@@ -180,13 +180,13 @@ function DebuffMe.Calcul(Debuff_Choice)
     end
 
     if (Timer <= 0) then 
-        if Debuff_Choice == Debuff.Debuff_M then --pas d'abréviation si debuff principal
+        if Debuff_Choice == DebuffMe.Debuff_M then --pas d'abréviation si debuff principal
             TimerTXT = "0"
         else
             TimerTXT = DebuffMe.Abbreviation[Debuff_Choice] 
         end
     else
-        if Debuff_Choice == Debuff.Debuff_M then --pas de virgule si debuff principal
+        if Debuff_Choice == DebuffMe.Debuff_M then --pas de virgule si debuff principal
             TimerTXT = tostring(string.format("%.0f", Timer))
         else
             TimerTXT = tostring(string.format("%.1f", Timer)) 
