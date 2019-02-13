@@ -18,7 +18,7 @@ DebuffMe.DebuffList = {
     [9] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
     [10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
     [11] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(21763)), --PotL 
-}
+} --52788 Taunt immunity
 
 DebuffMe.Abbreviation = {
     [1] = "",
@@ -33,6 +33,8 @@ DebuffMe.Abbreviation = {
     [10] = "WK", --Weakening  
     [11] = "PL", --PotL 
 }
+
+DebuffMe.flag_immunity = false
 ---------------------------
 ---- Variables Default ----
 ---------------------------
@@ -190,22 +192,35 @@ function DebuffMe.Calcul(Debuff_Choice)
     local currentTimeStamp = GetGameTimeMilliseconds() / 1000
     local Timer = 0
 	local TimerTXT = ""
+	DebuffMe.flag_immunity = false
 	
-    for i=1,GetNumBuffs("reticleover") do --Verif temps debuff
+    for i=1,GetNumBuffs("reticleover") do --check all debuffs if taunt
 		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)		
-		if(zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == DebuffMe.DebuffList[Debuff_Choice]) then
-			Timer = timeEnding - currentTimeStamp
+		if Debuff_Choice == 2 then --if taunt
+			if castByPlayer == true then
+				if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == DebuffMe.DebuffList[Debuff_Choice]) then
+					Timer = timeEnding - currentTimeStamp
+				end
+			end
+			if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == zo_strformat(SI_ABILITY_NAME, GetAbilityName(52788))) and (Timer == 0) then --check target taunt immunity
+				Timer = timeEnding - currentTimeStamp
+				DebuffMe.flag_immunity = true
+			end
+		else 
+			if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == DebuffMe.DebuffList[Debuff_Choice]) then
+				Timer = timeEnding - currentTimeStamp
+			end
 		end
-    end
+	end
 
     if (Timer <= 0) then 
-        if Debuff_Choice == DebuffMe.Debuff_M then --pas d'abréviation si debuff principal
+        if Debuff_Choice == DebuffMe.Debuff_M then --no abbreviation if main debuff
             TimerTXT = "0"
         else
             TimerTXT = DebuffMe.Abbreviation[Debuff_Choice] 
         end
     else
-        if Debuff_Choice == DebuffMe.Debuff_M then --pas de virgule si debuff principal
+        if Debuff_Choice == DebuffMe.Debuff_M then --no decimal point if main debuff
             TimerTXT = tostring(string.format("%.0f", Timer))
         else
             TimerTXT = tostring(string.format("%.1f", Timer)) 
@@ -236,6 +251,11 @@ function DebuffMe.Update()
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_M)
                 DebuffMeAlertMiddle:SetText(TXT)
                 DebuffMeAlertMiddle:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertMiddle:SetColor(unpack(255,0,0)) --red if immun
+				else 
+					DebuffMeAlertMiddle:SetColor(unpack(255,255,255)) --original color else (FFFFFF)
+				end
             else 
                 DebuffMeAlertMiddle:SetHidden(true)
             end
@@ -244,6 +264,11 @@ function DebuffMe.Update()
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_L)
                 DebuffMeAlertLeft:SetText(TXT)
                 DebuffMeAlertLeft:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertLeft:SetColor(unpack(255,0,0)) --red if immun
+				else 
+					DebuffMeAlertLeft:SetColor(unpack(0,170,255)) --original color else (00AAFF)
+				end
             else 
                 DebuffMeAlertLeft:SetHidden(true)
             end
@@ -252,6 +277,11 @@ function DebuffMe.Update()
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_T)
                 DebuffMeAlertTop:SetText(TXT)
                 DebuffMeAlertTop:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertTop:SetColor(unpack(255,0,0)) --red if immun
+				else 
+					DebuffMeAlertTop:SetColor(unpack(56,195,0)) --original color else (38C300)
+				end
             else 
                 DebuffMeAlertTop:SetHidden(true)
             end
@@ -260,6 +290,11 @@ function DebuffMe.Update()
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_R)
                 DebuffMeAlertRight:SetText(TXT)
                 DebuffMeAlertRight:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertRight:SetColor(unpack(255,0,0)) --red if immun
+				else 
+					DebuffMeAlertRight:SetColor(unpack(236,60,0)) --original color else (EC3C00)
+				end
             else 
                 DebuffMeAlertRight:SetHidden(true)
             end
