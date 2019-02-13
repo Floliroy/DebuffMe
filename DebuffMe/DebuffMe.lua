@@ -43,7 +43,8 @@ DebuffMe.Default = {
     Debuff_L = 4,
     Debuff_T = 3, 
     Debuff_R = 5,
-    AlwaysShowAlert = false
+    AlwaysShowAlert = false,
+	FontSize = 36
 }
 
 -------------------------
@@ -159,6 +160,24 @@ function DebuffMe.CreateSettingsWindow()
 				DebuffMeAlert:SetHidden(not newValue)  
 			end,
 		},
+		[10] = {
+            type = "slider",
+            name = "Font Size",
+            tooltip = "Choose here the size of the text, the middle debuff will be a bit smaller.",
+            getFunc = function() return DebuffMe.savedVariables.FontSize end,
+            setFunc = function(newValue) 
+				DebuffMe.savedVariables.FontSize = newValue 
+				DebuffMe.SetFontSize(DebuffMeAlertMiddle, (newValue * 0.9))
+				DebuffMe.SetFontSize(DebuffMeAlertLeft, newValue)
+				DebuffMe.SetFontSize(DebuffMeAlertTop, newValue)
+				DebuffMe.SetFontSize(DebuffMeAlertRight, newValue)
+			end,
+            min = 28,
+            max = 48,
+            step = 2,
+            default = 36,
+            width = "full",
+          },
 	}
 	
 	LAM2:RegisterOptionControls("DebuffMe_Settings", optionsData)
@@ -193,6 +212,12 @@ function DebuffMe.Calcul(Debuff_Choice)
         end
     end
     return TimerTXT
+end
+
+function DebuffMe.SetFontSize(label, size)
+     local path = "EsoUI/Common/Fonts/univers67.otf"
+     local outline = "soft-shadow-thick"
+     label:SetFont(path .. "|" .. size .. "|" .. outline)
 end
 
 ----------------
@@ -246,6 +271,10 @@ function DebuffMe.Update()
     end
 end
 
+--------------
+---- INIT ----
+--------------
+
 function DebuffMe:Initialize()
 	--Settings
 	DebuffMe.CreateSettingsWindow()
@@ -256,7 +285,12 @@ function DebuffMe:Initialize()
 	DebuffMeAlert:SetHidden(true)
 	DebuffMeAlert:ClearAnchors()
     DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
+	DebuffMe.SetFontSize(DebuffMeAlertMiddle, (newValue * 0.9))
+	DebuffMe.SetFontSize(DebuffMeAlertLeft, newValue)
+	DebuffMe.SetFontSize(DebuffMeAlertTop, newValue)
+	DebuffMe.SetFontSize(DebuffMeAlertRight, newValue)
 
+	--Main
     DebuffMe.Debuff_M = DebuffMe.savedVariables.Debuff_M
     DebuffMe.Debuff_L = DebuffMe.savedVariables.Debuff_L
     DebuffMe.Debuff_T = DebuffMe.savedVariables.Debuff_T
