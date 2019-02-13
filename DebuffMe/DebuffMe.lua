@@ -210,10 +210,12 @@ function DebuffMe.Calcul(Debuff_Choice)
 	end
 
 	if (Timer == 0) and (Debuff_Choice == 2) then
-		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-		if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == zo_strformat(SI_ABILITY_NAME, GetAbilityName(52788))) then --check target taunt immunity
-			Timer = timeEnding - currentTimeStamp
-			DebuffMe.flag_immunity = true
+		for i=1,GetNumBuffs("reticleover") do 
+			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
+			if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == zo_strformat(SI_ABILITY_NAME, GetAbilityName(52788))) then --check target taunt immunity
+				Timer = timeEnding - currentTimeStamp
+				DebuffMe.flag_immunity = true
+			end
 		end
 	end
 
