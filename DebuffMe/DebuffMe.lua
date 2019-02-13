@@ -202,14 +202,18 @@ function DebuffMe.Calcul(Debuff_Choice)
 					Timer = timeEnding - currentTimeStamp
 				end
 			end
-			if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == zo_strformat(SI_ABILITY_NAME, GetAbilityName(52788))) and (Timer == 0) then --check target taunt immunity
-				Timer = timeEnding - currentTimeStamp
-				DebuffMe.flag_immunity = true
-			end
 		else 
 			if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == DebuffMe.DebuffList[Debuff_Choice]) then
 				Timer = timeEnding - currentTimeStamp
 			end
+		end
+	end
+
+	if (Timer == 0) and (Debuff_Choice == 2) then
+		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
+		if (zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == zo_strformat(SI_ABILITY_NAME, GetAbilityName(52788))) then --check target taunt immunity
+			Timer = timeEnding - currentTimeStamp
+			DebuffMe.flag_immunity = true
 		end
 	end
 
@@ -230,16 +234,16 @@ function DebuffMe.Calcul(Debuff_Choice)
 end
 
 function DebuffMe.SetFontSize(label, size)
-     local path = "EsoUI/Common/Fonts/univers67.otf"
-     local outline = "soft-shadow-thick"
-     label:SetFont(path .. "|" .. size .. "|" .. outline)
+	local path = "EsoUI/Common/Fonts/univers67.otf"
+    local outline = "soft-shadow-thick"
+    label:SetFont(path .. "|" .. size .. "|" .. outline)
 end
 
 ----------------
 ---- UPDATE ----
 ----------------
 function DebuffMe.Update()
-    if (IsUnitInCombat("player")) then
+	if (IsUnitInCombat("player")) then
 
         local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("reticleover", POWERTYPE_HEALTH)
 		local TXT = ""
@@ -250,11 +254,11 @@ function DebuffMe.Update()
             if DebuffMe.Debuff_M ~= 1 then
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_M)
                 DebuffMeAlertMiddle:SetText(TXT)
-                DebuffMeAlertMiddle:SetHidden(false)
+				DebuffMeAlertMiddle:SetHidden(false)
 				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertMiddle:SetColor(unpack(255,0,0)) --red if immun
+					DebuffMeAlertMiddle:SetColor(unpack{1,0,0}) --red if immun
 				else 
-					DebuffMeAlertMiddle:SetColor(unpack(255,255,255)) --original color else (FFFFFF)
+					DebuffMeAlertMiddle:SetColor(unpack{1,1,1}) --original color else (FFFFFF)
 				end
             else 
                 DebuffMeAlertMiddle:SetHidden(true)
@@ -263,11 +267,11 @@ function DebuffMe.Update()
             if DebuffMe.Debuff_L ~= 1 then
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_L)
                 DebuffMeAlertLeft:SetText(TXT)
-                DebuffMeAlertLeft:SetHidden(false)
+				DebuffMeAlertLeft:SetHidden(false)
 				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertLeft:SetColor(unpack(255,0,0)) --red if immun
+					DebuffMeAlertLeft:SetColor(unpack{1,0,0}) --red if immun
 				else 
-					DebuffMeAlertLeft:SetColor(unpack(0,170,255)) --original color else (00AAFF)
+					DebuffMeAlertLeft:SetColor(unpack{0,(170/255),1}) --original color else (00AAFF)
 				end
             else 
                 DebuffMeAlertLeft:SetHidden(true)
@@ -278,9 +282,9 @@ function DebuffMe.Update()
                 DebuffMeAlertTop:SetText(TXT)
                 DebuffMeAlertTop:SetHidden(false)
 				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertTop:SetColor(unpack(255,0,0)) --red if immun
+					DebuffMeAlertTop:SetColor(unpack{1,0,0}) --red if immun
 				else 
-					DebuffMeAlertTop:SetColor(unpack(56,195,0)) --original color else (38C300)
+					DebuffMeAlertTop:SetColor(unpack{(56/255),(195/255),0}) --original color else (38C300)
 				end
             else 
                 DebuffMeAlertTop:SetHidden(true)
@@ -291,9 +295,9 @@ function DebuffMe.Update()
                 DebuffMeAlertRight:SetText(TXT)
                 DebuffMeAlertRight:SetHidden(false)
 				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertRight:SetColor(unpack(255,0,0)) --red if immun
+					DebuffMeAlertRight:SetColor(unpack{1,0,0}) --red if immun
 				else 
-					DebuffMeAlertRight:SetColor(unpack(236,60,0)) --original color else (EC3C00)
+					DebuffMeAlertRight:SetColor(unpack{(236/255),(60/255),0}) --original color else (EC3C00)
 				end
             else 
                 DebuffMeAlertRight:SetHidden(true)
@@ -320,10 +324,10 @@ function DebuffMe:Initialize()
 	DebuffMeAlert:SetHidden(true)
 	DebuffMeAlert:ClearAnchors()
     DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
-	DebuffMe.SetFontSize(DebuffMeAlertMiddle, (newValue * 0.9))
-	DebuffMe.SetFontSize(DebuffMeAlertLeft, newValue)
-	DebuffMe.SetFontSize(DebuffMeAlertTop, newValue)
-	DebuffMe.SetFontSize(DebuffMeAlertRight, newValue)
+	DebuffMe.SetFontSize(DebuffMeAlertMiddle, (DebuffMe.savedVariables.FontSize * 0.9))
+	DebuffMe.SetFontSize(DebuffMeAlertLeft, DebuffMe.savedVariables.FontSize)
+	DebuffMe.SetFontSize(DebuffMeAlertTop, DebuffMe.savedVariables.FontSize)
+	DebuffMe.SetFontSize(DebuffMeAlertRight, DebuffMe.savedVariables.FontSize)
 
 	--Main
     DebuffMe.Debuff_M = DebuffMe.savedVariables.Debuff_M
