@@ -1,7 +1,7 @@
 <GuiXml>
 	<Controls>
 		<TopLevelControl name="DebuffMeAlert" mouseEnabled="true" movable="true" hidden="false" clampedToScreen="true" >
-			<Dimensions x="900" y="500" />
+			<Dimensions x="200" y="100" />
 			<Anchor point="CENTER" relativeTo="GuiRoot" relativePoint="CENTER" />
 			
 			<OnMoveStop>

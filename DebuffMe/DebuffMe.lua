@@ -18,7 +18,40 @@ DebuffMe.DebuffList = {
     [9] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
     [10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
     [11] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(21763)), --PotL 
+} --52788 Taunt immunity
+
+DebuffMe.TransitionTable = {
+	[1] = 0,
+	[2] = 38541, --Taunt
+	[3] = 17906, --Crusher
+	[4] = 75753, --Alkosh
+	[5] = 31104, --EngFlames
+    [6] = 62988, --OffBalance
+    [7] = 81519, --Minor Vulnerability
+    [8] = 80020, --Minor LifeSteal
+    [9] = 39100, --Minor MagSteal    
+    [10] = 17945, --Weakening  
+    [11] = 21763, --PotL 
 }
+
+DebuffMe.CustomAbilityNameWithID = {
+	[38541] = GetAbilityName(38541), --Taunt
+	[17906] = GetAbilityName(17906), --Crusher
+	[75753] = GetAbilityName(75753), --Alkosh
+	[31104] = GetAbilityName(31104), --EngFlames
+    [62988] = GetAbilityName(62988), --OffBalance
+    [81519] = GetAbilityName(81519), --Minor Vulnerability
+    [80020] = GetAbilityName(80020), --Minor LifeSteal
+    [39100] = GetAbilityName(39100), --Minor MagSteal    
+    [17945] = GetAbilityName(17945), --Weakening  
+	[21763] = GetAbilityName(21763), --PotL 
+	[52788] = GetAbilityName(52788), --Taunt Immunity
+}
+
+local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
+	local name = DebuffMe.CustomAbilityNameWithID[id] or zo_strformat(SI_ABILITY_NAME, GetAbilityName(id))
+	return name
+end 
 
 DebuffMe.Abbreviation = {
     [1] = "",
@@ -33,6 +66,8 @@ DebuffMe.Abbreviation = {
     [10] = "WK", --Weakening  
     [11] = "PL", --PotL 
 }
+
+DebuffMe.flag_immunity = false
 ---------------------------
 ---- Variables Default ----
 ---------------------------
@@ -43,7 +78,8 @@ DebuffMe.Default = {
     Debuff_L = 4,
     Debuff_T = 3, 
     Debuff_R = 5,
-    AlwaysShowAlert = false
+    AlwaysShowAlert = false,
+	FontSize = 36
 }
 
 -------------------------
@@ -159,6 +195,24 @@ function DebuffMe.CreateSettingsWindow()
 				DebuffMeAlert:SetHidden(not newValue)  
 			end,
 		},
+		[10] = {
+            type = "slider",
+            name = "Font Size",
+            tooltip = "Choose here the size of the text, the middle debuff will be a bit smaller.",
+            getFunc = function() return DebuffMe.savedVariables.FontSize end,
+            setFunc = function(newValue) 
+				DebuffMe.savedVariables.FontSize = newValue 
+				DebuffMe.SetFontSize(DebuffMeAlertMiddle, (newValue * 0.9))
+				DebuffMe.SetFontSize(DebuffMeAlertLeft, newValue)
+				DebuffMe.SetFontSize(DebuffMeAlertTop, newValue)
+				DebuffMe.SetFontSize(DebuffMeAlertRight, newValue)
+			end,
+            min = 20,
+            max = 72,
+            step = 2,
+            default = 36,
+            width = "full",
+          },
 	}
 	
 	LAM2:RegisterOptionControls("DebuffMe_Settings", optionsData)
@@ -168,25 +222,46 @@ end
 ---- FONCTION ----
 ------------------
 function DebuffMe.Calcul(Debuff_Choice)
-    local currentTimeStamp = GetGameTimeMilliseconds() / 1000
+	local currentTimeStamp = GetGameTimeMilliseconds() / 1000
+	DebuffID = DebuffMe.TransitionTable[Debuff_Choice]
+
     local Timer = 0
 	local TimerTXT = ""
+	DebuffMe.flag_immunity = false
 	
-    for i=1,GetNumBuffs("reticleover") do --Verif temps debuff
+    for i=1,GetNumBuffs("reticleover") do --check all debuffs if taunt
 		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)		
-		if(zo_strformat(SI_ABILITY_NAME,GetAbilityName(abilityId)) == DebuffMe.DebuffList[Debuff_Choice]) then
-			Timer = timeEnding - currentTimeStamp
+		if Debuff_Choice == 2 then --if taunt
+			if castByPlayer == true then
+				if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(DebuffID) then 
+					Timer = timeEnding - currentTimeStamp
+				end
+			end
+		else 
+			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(DebuffID) then
+				Timer = timeEnding - currentTimeStamp
+			end
 		end
-    end
+	end
+
+	if (Timer == 0) and (Debuff_Choice == 2) then
+		for i=1,GetNumBuffs("reticleover") do 
+			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
+			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(52788) then --check target taunt immunity 
+				Timer = timeEnding - currentTimeStamp
+				DebuffMe.flag_immunity = true
+			end
+		end
+	end
 
     if (Timer <= 0) then 
-        if Debuff_Choice == DebuffMe.Debuff_M then --pas d'abréviation si debuff principal
+        if Debuff_Choice == DebuffMe.Debuff_M then --no abbreviation if main debuff
             TimerTXT = "0"
         else
             TimerTXT = DebuffMe.Abbreviation[Debuff_Choice] 
         end
     else
-        if Debuff_Choice == DebuffMe.Debuff_M then --pas de virgule si debuff principal
+        if Debuff_Choice == DebuffMe.Debuff_M then --no decimal point if main debuff
             TimerTXT = tostring(string.format("%.0f", Timer))
         else
             TimerTXT = tostring(string.format("%.1f", Timer)) 
@@ -195,11 +270,17 @@ function DebuffMe.Calcul(Debuff_Choice)
     return TimerTXT
 end
 
+function DebuffMe.SetFontSize(label, size)
+	local path = "EsoUI/Common/Fonts/univers67.otf"
+    local outline = "soft-shadow-thick"
+    label:SetFont(path .. "|" .. size .. "|" .. outline)
+end
+
 ----------------
 ---- UPDATE ----
 ----------------
 function DebuffMe.Update()
-    if (IsUnitInCombat("player")) then
+	if (IsUnitInCombat("player")) then
 
         local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("reticleover", POWERTYPE_HEALTH)
 		local TXT = ""
@@ -210,7 +291,12 @@ function DebuffMe.Update()
             if DebuffMe.Debuff_M ~= 1 then
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_M)
                 DebuffMeAlertMiddle:SetText(TXT)
-                DebuffMeAlertMiddle:SetHidden(false)
+				DebuffMeAlertMiddle:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertMiddle:SetColor(unpack{1,0,0}) --red if immun
+				else 
+					DebuffMeAlertMiddle:SetColor(unpack{1,1,1}) --original color else (FFFFFF)
+				end
             else 
                 DebuffMeAlertMiddle:SetHidden(true)
             end
@@ -218,7 +304,12 @@ function DebuffMe.Update()
             if DebuffMe.Debuff_L ~= 1 then
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_L)
                 DebuffMeAlertLeft:SetText(TXT)
-                DebuffMeAlertLeft:SetHidden(false)
+				DebuffMeAlertLeft:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertLeft:SetColor(unpack{1,0,0}) --red if immun
+				else 
+					DebuffMeAlertLeft:SetColor(unpack{0,(170/255),1}) --original color else (00AAFF)
+				end
             else 
                 DebuffMeAlertLeft:SetHidden(true)
             end
@@ -227,6 +318,11 @@ function DebuffMe.Update()
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_T)
                 DebuffMeAlertTop:SetText(TXT)
                 DebuffMeAlertTop:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertTop:SetColor(unpack{1,0,0}) --red if immun
+				else 
+					DebuffMeAlertTop:SetColor(unpack{(56/255),(195/255),0}) --original color else (38C300)
+				end
             else 
                 DebuffMeAlertTop:SetHidden(true)
             end
@@ -235,6 +331,11 @@ function DebuffMe.Update()
                 TXT = DebuffMe.Calcul(DebuffMe.Debuff_R)
                 DebuffMeAlertRight:SetText(TXT)
                 DebuffMeAlertRight:SetHidden(false)
+				if (DebuffMe.flag_immunity == true) then
+					DebuffMeAlertRight:SetColor(unpack{1,0,0}) --red if immun
+				else 
+					DebuffMeAlertRight:SetColor(unpack{(236/255),(60/255),0}) --original color else (EC3C00)
+				end
             else 
                 DebuffMeAlertRight:SetHidden(true)
             end
@@ -246,6 +347,10 @@ function DebuffMe.Update()
     end
 end
 
+--------------
+---- INIT ----
+--------------
+
 function DebuffMe:Initialize()
 	--Settings
 	DebuffMe.CreateSettingsWindow()
@@ -256,7 +361,12 @@ function DebuffMe:Initialize()
 	DebuffMeAlert:SetHidden(true)
 	DebuffMeAlert:ClearAnchors()
     DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
+	DebuffMe.SetFontSize(DebuffMeAlertMiddle, (DebuffMe.savedVariables.FontSize * 0.9))
+	DebuffMe.SetFontSize(DebuffMeAlertLeft, DebuffMe.savedVariables.FontSize)
+	DebuffMe.SetFontSize(DebuffMeAlertTop, DebuffMe.savedVariables.FontSize)
+	DebuffMe.SetFontSize(DebuffMeAlertRight, DebuffMe.savedVariables.FontSize)
 
+	--Main
     DebuffMe.Debuff_M = DebuffMe.savedVariables.Debuff_M
     DebuffMe.Debuff_L = DebuffMe.savedVariables.Debuff_L
     DebuffMe.Debuff_T = DebuffMe.savedVariables.Debuff_T
