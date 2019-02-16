@@ -1,7 +1,7 @@
 ﻿## Title: |cd7d708DebuffMe|r
 ## APIVersion: 100025
 ## Author: Floliroy
-## Version: 1
+## Version: 1.2
 ## OptionalDependsOn: LibAddonMenu-2.0
 ## SavedVariables: DebuffMeVariables
 

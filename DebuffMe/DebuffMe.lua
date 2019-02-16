@@ -4,7 +4,7 @@ local LAM2 = LibStub:GetLibrary("LibAddonMenu-2.0")
 -----------------
 DebuffMe = {}
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1"
+DebuffMe.version = "1.2"
 
 DebuffMe.DebuffList = {
     [1] = "None",
@@ -14,11 +14,15 @@ DebuffMe.DebuffList = {
 	[5] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(31104)), --EngFlames
     [6] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62988)), --OffBalance
     [7] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(81519)), --Minor Vulnerability
-    [8] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(80020)), --Minor LifeSteal
+    [8] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68368)), --Minor Maim
     [9] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
     [10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
     [11] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(21763)), --PotL 
-} --52788 Taunt immunity
+} 
+--52788 Taunt immunity
+--102771 OffBalance immunity
+--68359 Minor Vulne (not IA)
+--80020 Minor Lifesteal
 
 DebuffMe.TransitionTable = {
 	[1] = 0,
@@ -28,7 +32,7 @@ DebuffMe.TransitionTable = {
 	[5] = 31104, --EngFlames
     [6] = 62988, --OffBalance
     [7] = 81519, --Minor Vulnerability
-    [8] = 80020, --Minor LifeSteal
+    [8] = 68368, --Minor Maim
     [9] = 39100, --Minor MagSteal    
     [10] = 17945, --Weakening  
     [11] = 21763, --PotL 
@@ -36,16 +40,18 @@ DebuffMe.TransitionTable = {
 
 DebuffMe.CustomAbilityNameWithID = {
 	[38541] = GetAbilityName(38541), --Taunt
+	[52788] = GetAbilityName(52788), --Taunt Immunity
 	[17906] = GetAbilityName(17906), --Crusher
 	[75753] = GetAbilityName(75753), --Alkosh
 	[31104] = GetAbilityName(31104), --EngFlames
-    [62988] = GetAbilityName(62988), --OffBalance
-    [81519] = GetAbilityName(81519), --Minor Vulnerability
-    [80020] = GetAbilityName(80020), --Minor LifeSteal
+	[62988] = GetAbilityName(62988), --OffBalance
+	[102771] = GetAbilityName(102771), --OffBalance Immunity
+	[81519] = GetAbilityName(81519), --Minor Vulnerability
+	[68359] = GetAbilityName(68359), --Minor Vulne (not IA)
+    [68368] = GetAbilityName(68368), --Minor Maim
     [39100] = GetAbilityName(39100), --Minor MagSteal    
     [17945] = GetAbilityName(17945), --Weakening  
 	[21763] = GetAbilityName(21763), --PotL 
-	[52788] = GetAbilityName(52788), --Taunt Immunity
 }
 
 local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
@@ -61,8 +67,8 @@ DebuffMe.Abbreviation = {
 	[5] = "EF", --EngFlames
     [6] = "OB", --OffBalance
     [7] = "IA", --Minor Vulnerability
-    [8] = "ML", --Minor LifeSteal
-    [9] = "MM", --Minor MagSteal    
+    [8] = "MM", --Minor Maim
+    [9] = "MS", --Minor MagSteal    
     [10] = "WK", --Weakening  
     [11] = "PL", --PotL 
 }
@@ -229,7 +235,7 @@ function DebuffMe.Calcul(Debuff_Choice)
 	local TimerTXT = ""
 	DebuffMe.flag_immunity = false
 	
-    for i=1,GetNumBuffs("reticleover") do --check all debuffs if taunt
+    for i=1,GetNumBuffs("reticleover") do --check all debuffs
 		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)		
 		if Debuff_Choice == 2 then --if taunt
 			if castByPlayer == true then
@@ -244,12 +250,29 @@ function DebuffMe.Calcul(Debuff_Choice)
 		end
 	end
 
-	if (Timer == 0) and (Debuff_Choice == 2) then
+	if (Timer == 0) and (Debuff_Choice == 2) then --check target taunt immunity 
 		for i=1,GetNumBuffs("reticleover") do 
 			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(52788) then --check target taunt immunity 
+			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(52788) then 
 				Timer = timeEnding - currentTimeStamp
 				DebuffMe.flag_immunity = true
+			end
+		end
+	end
+	if (Timer == 0) and (Debuff_Choice == 6) then --check target taunt immunity 
+		for i=1,GetNumBuffs("reticleover") do 
+			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
+			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(102771) then 
+				Timer = timeEnding - currentTimeStamp
+				DebuffMe.flag_immunity = true
+			end
+		end
+	end
+	if (Timer == 0) and (Debuff_Choice == 7) then --check minor vulnerability (not IA)
+		for i=1,GetNumBuffs("reticleover") do 
+			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
+			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(68359) then 
+				Timer = timeEnding - currentTimeStamp
 			end
 		end
 	end
