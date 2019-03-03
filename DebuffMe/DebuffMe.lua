@@ -4,7 +4,7 @@ local LAM2 = LibStub:GetLibrary("LibAddonMenu-2.0")
 -----------------
 DebuffMe = {}
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.2"
+DebuffMe.version = "1.3.1"
 
 DebuffMe.DebuffList = {
     [1] = "None",
@@ -85,7 +85,8 @@ DebuffMe.Default = {
     Debuff_T = 3, 
     Debuff_R = 5,
     AlwaysShowAlert = false,
-	FontSize = 36
+	FontSize = 36,
+	Spacing = 10
 }
 
 -------------------------
@@ -112,7 +113,7 @@ function DebuffMe.CreateSettingsWindow()
 		},
 		[2] = {
 			type = "description",
-			text = "Choos here which debuff you want to show.",
+			text = "Choose here which debuff you want to show.",
 		},
 		[3] = {
 			type = "dropdown",
@@ -190,7 +191,18 @@ function DebuffMe.CreateSettingsWindow()
 			type = "description",
 			text = "More coming soon !",
 		},
-        [9] = {
+		[9] = {
+			type = "button",
+			name = "Reset Position",
+			tooltip = "Reset the position of the timers at their initial position: center of your screen.",
+			func = function()
+				DebuffMe.savedVariables.OffsetX = 0
+				DebuffMe.savedVariables.OffsetY = 0
+				DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
+			end,
+			width = "half",
+		},
+        [10] = {
 			type = "checkbox",
 			name = "Unlock",
 			tooltip = "Use it to move the timers.",
@@ -201,7 +213,7 @@ function DebuffMe.CreateSettingsWindow()
 				DebuffMeAlert:SetHidden(not newValue)  
 			end,
 		},
-		[10] = {
+		[11] = {
             type = "slider",
             name = "Font Size",
             tooltip = "Choose here the size of the text, the middle debuff will be a bit smaller.",
@@ -217,6 +229,23 @@ function DebuffMe.CreateSettingsWindow()
             max = 72,
             step = 2,
             default = 36,
+            width = "full",
+		  },
+		  [12] = {
+            type = "slider",
+            name = "Spacing",
+            tooltip = "Choose here the spacing between the different timers.",
+            getFunc = function() return DebuffMe.savedVariables.Spacing end,
+            setFunc = function(newValue) 
+				DebuffMe.savedVariables.Spacing = newValue 
+				DebuffMeAlertLeft:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, -8*DebuffMe.savedVariables.Spacing, DebuffMe.savedVariables.Spacing)
+				DebuffMeAlertTop:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, 0, -6*DebuffMe.savedVariables.Spacing)
+				DebuffMeAlertRight:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, 8*DebuffMe.savedVariables.Spacing, DebuffMe.savedVariables.Spacing)
+			end,
+            min = 3,
+            max = 30,
+            step = 1,
+            default = 10,
             width = "full",
           },
 	}
@@ -259,7 +288,7 @@ function DebuffMe.Calcul(Debuff_Choice)
 			end
 		end
 	end
-	if (Timer == 0) and (Debuff_Choice == 6) then --check target taunt immunity 
+	if (Timer == 0) and (Debuff_Choice == 6) then --check target offbalance immunity 
 		for i=1,GetNumBuffs("reticleover") do 
 			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
 			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(102771) then 
@@ -268,7 +297,7 @@ function DebuffMe.Calcul(Debuff_Choice)
 			end
 		end
 	end
-	if (Timer == 0) and (Debuff_Choice == 7) then --check minor vulnerability (not IA)
+	if (Timer <= 4) and (Debuff_Choice == 7) then --check minor vulnerability (not IA)
 		for i=1,GetNumBuffs("reticleover") do 
 			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
 			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(68359) then 
@@ -303,6 +332,7 @@ end
 ---- UPDATE ----
 ----------------
 function DebuffMe.Update()
+	--d("X: " ..DebuffMe.savedVariables.OffsetX .. " Y: " .. DebuffMe.savedVariables.OffsetY)
 	if (IsUnitInCombat("player")) then
 
         local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("reticleover", POWERTYPE_HEALTH)
@@ -383,7 +413,16 @@ function DebuffMe:Initialize()
 	--UI
 	DebuffMeAlert:SetHidden(true)
 	DebuffMeAlert:ClearAnchors()
-    DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
+	if (DebuffMe.savedVariables.OffsetX ~= 0) and (DebuffMe.savedVariables.OffsetY ~= 0) then 	--recover last position
+		DebuffMeAlert:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
+	else																						--initial position (center)
+		DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
+	end
+	
+	DebuffMeAlertLeft:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, -8*DebuffMe.savedVariables.Spacing, DebuffMe.savedVariables.Spacing)
+	DebuffMeAlertTop:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, 0, -6*DebuffMe.savedVariables.Spacing)
+	DebuffMeAlertRight:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, 8*DebuffMe.savedVariables.Spacing, DebuffMe.savedVariables.Spacing)
+
 	DebuffMe.SetFontSize(DebuffMeAlertMiddle, (DebuffMe.savedVariables.FontSize * 0.9))
 	DebuffMe.SetFontSize(DebuffMeAlertLeft, DebuffMe.savedVariables.FontSize)
 	DebuffMe.SetFontSize(DebuffMeAlertTop, DebuffMe.savedVariables.FontSize)
@@ -401,8 +440,8 @@ function DebuffMe:Initialize()
 end
 
 function DebuffMe.SaveLoc()
-	DebuffMe.savedVariables.OffsetX = DebuffMeAlertTaunt:GetLeft()
-	DebuffMe.savedVariables.OffsetY = DebuffMeAlertTaunt:GetTop()
+	DebuffMe.savedVariables.OffsetX = DebuffMeAlert:GetLeft()
+	DebuffMe.savedVariables.OffsetY = DebuffMeAlert:GetTop()
 end	
  
 function DebuffMe.OnAddOnLoaded(event, addonName)
