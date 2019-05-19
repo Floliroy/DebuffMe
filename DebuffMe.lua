@@ -104,7 +104,7 @@ function DebuffMe.CreateSettingsWindow()
 	local panelData = {
 		type = "panel",
 		name = "DebuffMe",
-		displayName = "DebuffMe",
+		displayName = "Debuff|cec3c00Me|r",
 		author = "Floliroy",
 		version = DebuffMe.version,
 		slashCommand = "/dbuffme",
