@@ -2,9 +2,11 @@ local LAM2 = LibStub:GetLibrary("LibAddonMenu-2.0")
 -----------------
 ---- Globals ----
 -----------------
-DebuffMe = {}
+DebuffMe = DebuffMe or {}
+local DebuffMe = DebuffMe
+
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.3.3"
+DebuffMe.version = "1.3.4"
 
 DebuffMe.DebuffList = {
     [1] = "None",
@@ -18,7 +20,10 @@ DebuffMe.DebuffList = {
 	[9] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
 	[10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(88565)), --Minor LifeSteal    
     [11] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
-    [12] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(21763)), --PotL 
+	[12] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(64144)), --Minor Fracture
+	[13] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68588)), --Minor Breach
+	[14] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62484)), --Major Fracture
+	[15] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62485)), --Major Breach
 }
 --52788 Taunt immunity
 --102771 OffBalance immunity
@@ -40,7 +45,10 @@ DebuffMe.TransitionTable = {
 	[9] = 39100, --Minor MagSteal   
 	[10] = 88565, --Minor LifeSteal 
     [11] = 17945, --Weakening  
-    [12] = 21763, --PotL 
+	[12] = 64144, --Minor Fracture
+	[13] = 68588, --Minor Breach
+	[14] = 62484, --Major Fracture
+	[15] = 62485, --Major Breach
 }
 
 DebuffMe.CustomAbilityNameWithID = {
@@ -57,7 +65,10 @@ DebuffMe.CustomAbilityNameWithID = {
 	[39100] = GetAbilityName(39100), --Minor MagSteal    
 	[88565] = GetAbilityName(88565), --Minor LifeSteal    
     [17945] = GetAbilityName(17945), --Weakening  
-	[21763] = GetAbilityName(21763), --PotL 
+	[64144] = GetAbilityName(64144), --Minor Fracture  
+	[68588] = GetAbilityName(68588), --Minor Breach   
+    [62484] = GetAbilityName(62484), --Major Fracture 
+	[62485] = GetAbilityName(62485), --Major Breach 
 }
 
 local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
@@ -73,11 +84,14 @@ DebuffMe.Abbreviation = {
 	[5] = "EF", --EngFlames
     [6] = "OB", --OffBalance
     [7] = "IA", --Minor Vulnerability
-    [8] = "MM", --Minor Maim
-	[9] = "MS", --Minor MagSteal    
-	[10] = "LS", --Minor LifeSteal   
+    [8] = "mM", --Minor Maim
+	[9] = "mS", --Minor MagSteal    
+	[10] = "mL", --Minor LifeSteal   
     [11] = "WK", --Weakening  
-    [12] = "PL", --PotL 
+    [12] = "mF", --Minor Fracture
+	[13] = "mB", --Minor Breach
+	[14] = "MF", --Major Fracture
+	[15] = "MB", --Major Breach
 }
 
 DebuffMe.flag_immunity = false
