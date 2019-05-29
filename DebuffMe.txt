@@ -1,4 +1,5 @@
-﻿## Title: Debuff|cec3c00Me|r
+﻿
+## Title: Debuff|cec3c00Me|r
 ## APIVersion: 100027
 ## Author: Floliroy
 ## Version: 1.3.4
