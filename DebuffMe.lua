@@ -6,7 +6,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.3.4"
+DebuffMe.version = "1.3.5"
 
 DebuffMe.DebuffList = {
     [1] = "None",
@@ -24,6 +24,7 @@ DebuffMe.DebuffList = {
 	[13] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68588)), --Minor Breach
 	[14] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62484)), --Major Fracture
 	[15] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62485)), --Major Breach
+	[16] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(122397)), --Major Vulnerability
 }
 --52788 Taunt immunity
 --102771 OffBalance immunity
@@ -49,6 +50,7 @@ DebuffMe.TransitionTable = {
 	[13] = 68588, --Minor Breach
 	[14] = 62484, --Major Fracture
 	[15] = 62485, --Major Breach
+	[16] = 122397, --Major Vulnerability
 }
 
 DebuffMe.CustomAbilityNameWithID = {
@@ -69,6 +71,7 @@ DebuffMe.CustomAbilityNameWithID = {
 	[68588] = GetAbilityName(68588), --Minor Breach   
     [62484] = GetAbilityName(62484), --Major Fracture 
 	[62485] = GetAbilityName(62485), --Major Breach 
+	[122397] = GetAbilityName(122397), --Major Vulnerability 
 }
 
 local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
@@ -92,6 +95,7 @@ DebuffMe.Abbreviation = {
 	[13] = "mB", --Minor Breach
 	[14] = "MF", --Major Fracture
 	[15] = "MB", --Major Breach
+	[16] = "MV", --Major Vulnerability 
 }
 
 DebuffMe.flag_immunity = false
@@ -153,6 +157,7 @@ function DebuffMe.CreateSettingsWindow()
 					end
 				end
 			end,
+			scrollable = true,
 		},
         [4] = {
 			type = "dropdown",
@@ -170,6 +175,7 @@ function DebuffMe.CreateSettingsWindow()
 					end
 				end
 			end,
+			scrollable = true,
 		},
         [5] = {
 			type = "dropdown",
@@ -187,6 +193,7 @@ function DebuffMe.CreateSettingsWindow()
 					end
 				end
 			end,
+			scrollable = true,
 		},
         [6] = {
 			type = "dropdown",
@@ -204,6 +211,7 @@ function DebuffMe.CreateSettingsWindow()
 					end
 				end
 			end,
+			scrollable = true,
 		},
         [7] = {
 			type = "header",
@@ -338,15 +346,27 @@ function DebuffMe.Calcul(Debuff_Choice)
 			end
 		end
 	end
-	if (Timer <= 4) and (Debuff_Choice == 7) then --check minor vulnerability (not IA)
+	if (Timer <= 4) and (Debuff_Choice == 7) then --check minor vulnerability from shock
 		for i=1,GetNumBuffs("reticleover") do 
 			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
 			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(68359) then 
-				Timer = timeEnding - currentTimeStamp
+				if Timer <= timeEnding - currentTimeStamp then
+					Timer = timeEnding - currentTimeStamp
+				end
 			end
 		end
 	end
-	if (Timer <= 4) and (Debuff_Choice == 8) then --check minor main (not W+S)
+	if (Timer <= 8) and (Debuff_Choice == 7) then --check minor vulnerability from nb gap closer
+		for i=1,GetNumBuffs("reticleover") do 
+			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
+			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(124806) then 
+				if Timer <= timeEnding - currentTimeStamp then
+					Timer = timeEnding - currentTimeStamp
+				end
+			end
+		end
+	end
+	if (Timer <= 4) and (Debuff_Choice == 8) then --check minor main from chilled
 		for i=1,GetNumBuffs("reticleover") do 
 			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
 			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(68368) then 
