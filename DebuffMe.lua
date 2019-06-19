@@ -6,7 +6,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.3.5"
+DebuffMe.version = "1.4.0"
 
 DebuffMe.DebuffList = {
     [1] = "None",
@@ -25,6 +25,8 @@ DebuffMe.DebuffList = {
 	[14] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62484)), --Major Fracture
 	[15] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62485)), --Major Breach
 	[16] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(122397)), --Major Vulnerability
+	[17] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34384)), --Morag Tong
+	[18] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34734)), --Surprise Attack
 }
 --52788 Taunt immunity
 --102771 OffBalance immunity
@@ -51,6 +53,8 @@ DebuffMe.TransitionTable = {
 	[14] = 62484, --Major Fracture
 	[15] = 62485, --Major Breach
 	[16] = 122397, --Major Vulnerability
+	[17] = 34384, --Morag Tong
+	[18] = 34734, --Surprise Attack
 }
 
 DebuffMe.CustomAbilityNameWithID = {
@@ -72,6 +76,8 @@ DebuffMe.CustomAbilityNameWithID = {
     [62484] = GetAbilityName(62484), --Major Fracture 
 	[62485] = GetAbilityName(62485), --Major Breach 
 	[122397] = GetAbilityName(122397), --Major Vulnerability 
+	[34384] = GetAbilityName(34384), --Morag Tong
+	[34734] = GetAbilityName(34734), --Surprise Attack
 }
 
 local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
@@ -96,6 +102,8 @@ DebuffMe.Abbreviation = {
 	[14] = "MF", --Major Fracture
 	[15] = "MB", --Major Breach
 	[16] = "MV", --Major Vulnerability 
+	[17] = "MT", --Morag Tong
+	[18] = "SA", --Surprise Attack
 }
 
 DebuffMe.flag_immunity = false
@@ -105,10 +113,10 @@ DebuffMe.flag_immunity = false
 DebuffMe.Default = {
 	OffsetX = 0,
 	OffsetY = 0,
-    Debuff_M = 2,
-    Debuff_L = 4,
-    Debuff_T = 3, 
-    Debuff_R = 5,
+	Debuff_Show = {	[1] = 2,
+					[2] = 4,
+					[3] = 3,
+					[4] = 5},
     AlwaysShowAlert = false,
 	FontSize = 36,
 	Spacing = 10,
@@ -147,12 +155,12 @@ function DebuffMe.CreateSettingsWindow()
 			tooltip = "No number after the decimal point, neither abbreviation if debuff at 0.",
 			choices = DebuffMe.DebuffList,
 			default = DebuffMe.DebuffList[2],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_M] end,
+			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[1]] end,
 			setFunc = function(selected)
 				for index, name in ipairs(DebuffMe.DebuffList) do
 					if name == selected then
-						DebuffMe.savedVariables.Debuff_M = index
-						DebuffMe.Debuff_M = index
+						DebuffMe.savedVariables.Debuff_Show[1] = index
+						DebuffMe.Debuff_Show[1] = index
 						break
 					end
 				end
@@ -165,12 +173,12 @@ function DebuffMe.CreateSettingsWindow()
 			tooltip = "One number after the decimal point, and abbreviation if debuff at 0.",
 			choices = DebuffMe.DebuffList,
 			default = DebuffMe.DebuffList[4],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_L] end,
+			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[2]] end,
 			setFunc = function(selected)
 				for index, name in ipairs(DebuffMe.DebuffList) do
 					if name == selected then
-						DebuffMe.savedVariables.Debuff_L = index
-						DebuffMe.Debuff_L = index
+						DebuffMe.savedVariables.Debuff_Show[2] = index
+						DebuffMe.Debuff_Show[2] = index
 						break
 					end
 				end
@@ -183,12 +191,12 @@ function DebuffMe.CreateSettingsWindow()
 			tooltip = "One number after the decimal point, and abbreviation if debuff at 0.",
 			choices = DebuffMe.DebuffList,
 			default = DebuffMe.DebuffList[3],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_T] end,
+			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[3]] end,
 			setFunc = function(selected)
 				for index, name in ipairs(DebuffMe.DebuffList) do
 					if name == selected then
-						DebuffMe.savedVariables.Debuff_T = index
-						DebuffMe.Debuff_T = index
+						DebuffMe.savedVariables.Debuff_Show[3] = index
+						DebuffMe.Debuff_Show[3] = index
 						break
 					end
 				end
@@ -201,12 +209,12 @@ function DebuffMe.CreateSettingsWindow()
 			tooltip = "One number after the decimal point, and abbreviation if debuff at 0.",
 			choices = DebuffMe.DebuffList,
 			default = DebuffMe.DebuffList[5],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_R] end,
+			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[4]] end,
 			setFunc = function(selected)
 				for index, name in ipairs(DebuffMe.DebuffList) do
 					if name == selected then
-						DebuffMe.savedVariables.Debuff_R = index
-						DebuffMe.Debuff_R = index
+						DebuffMe.savedVariables.Debuff_Show[4] = index
+						DebuffMe.Debuff_Show[4] = index
 						break
 					end
 				end
@@ -287,8 +295,8 @@ function DebuffMe.CreateSettingsWindow()
 			setFunc = function(newValue) 
 				DebuffMe.savedVariables.SlowMode = newValue
 				DebuffMe.SlowMode = newValue
+				DebuffMe.EventRegister()
 			end,
-			requiresReload = true,
 		},
 	}
 	
@@ -298,68 +306,78 @@ end
 ------------------
 ---- FONCTION ----
 ------------------
-function DebuffMe.Calcul(Debuff_Choice)
+function DebuffMe.DoesDebuffEquals(ID1, ID2)
+	if (GetFormattedAbilityNameWithID(ID1)) == (GetFormattedAbilityNameWithID(ID2)) then 
+		return true
+	else
+		return false
+	end
+end
+
+function DebuffMe.Calcul(index)
+	local Debuff_Choice = DebuffMe.Debuff_Show[index]
 	local currentTimeStamp = GetGameTimeMilliseconds() / 1000
 	DebuffID = DebuffMe.TransitionTable[Debuff_Choice]
 
     local Timer = 0
-	local TimerTXT = ""
 	DebuffMe.flag_immunity = false
 	
-    for i=1,GetNumBuffs("reticleover") do --check all debuffs
-		local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)		
+	for i=1, GetNumBuffs("reticleover") do --check all debuffs
+		local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, castByPlayer = GetUnitBuffInfo("reticleover",i)		
 		if Debuff_Choice == 2 then --if taunt
 			if castByPlayer == true then
-				if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(DebuffID) then 
+				if DebuffMe.DoesDebuffEquals(abilityId, DebuffID) then 
 					Timer = timeEnding - currentTimeStamp
 				end
 			end
 		else 
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(DebuffID) then
+			if DebuffMe.DoesDebuffEquals(abilityId, DebuffID) then
 				if Timer < timeEnding - currentTimeStamp then --ignore conflict when more than one player is applying the same debuff
 					Timer = timeEnding - currentTimeStamp
 				end
 			end
 		end
-		--if abilityId == 80020 then
-		--	d("test")
-		--end
 	end
 
-	--SPECIAL TIMERS
-
-	if (Timer == 0) and (Debuff_Choice == 2) then --check target taunt immunity 
+	--------------------
+	-- SPECIAL TIMERS --
+	--------------------
+		----------------
+		-- IMMUNITIES --
+		----------------
+	if (Timer <= 0) and (Debuff_Choice == 2) then --check target taunt immunity 
 		for i=1,GetNumBuffs("reticleover") do 
-			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(52788) then 
+			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 52788) then 
 				Timer = timeEnding - currentTimeStamp
 				DebuffMe.flag_immunity = true
 			end
 		end
 	end
-	if (Timer == 0) and (Debuff_Choice == 6) then --check target offbalance immunity 
+	if (Timer <= 0) and (Debuff_Choice == 6) then --check target offbalance immunity 
 		for i=1,GetNumBuffs("reticleover") do 
-			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(102771) then 
+			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 102771) then 
 				Timer = timeEnding - currentTimeStamp
 				DebuffMe.flag_immunity = true
 			end
 		end
 	end
+		-------------------
+		-- VULNERABILITY --
+		-------------------
 	if (Timer <= 4) and (Debuff_Choice == 7) then --check minor vulnerability from shock
 		for i=1,GetNumBuffs("reticleover") do 
-			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(68359) then 
-				if Timer <= timeEnding - currentTimeStamp then
-					Timer = timeEnding - currentTimeStamp
-				end
+			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 68359) then 
+				Timer = timeEnding - currentTimeStamp
 			end
 		end
 	end
 	if (Timer <= 8) and (Debuff_Choice == 7) then --check minor vulnerability from nb gap closer
 		for i=1,GetNumBuffs("reticleover") do 
-			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(124806) then 
+			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 124806) then 
 				if Timer <= timeEnding - currentTimeStamp then
 					Timer = timeEnding - currentTimeStamp
 				end
@@ -368,23 +386,26 @@ function DebuffMe.Calcul(Debuff_Choice)
 	end
 	if (Timer <= 4) and (Debuff_Choice == 8) then --check minor main from chilled
 		for i=1,GetNumBuffs("reticleover") do 
-			local buffName, timeStarted, timeEnding, buffSlot, stackCount, iconFilename, buffType, effectType, abilityType, statusEffectType, abilityId, canClickOff, castByPlayer = GetUnitBuffInfo("reticleover",i)
-			if GetFormattedAbilityNameWithID(abilityId) == GetFormattedAbilityNameWithID(68368) then 
+			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 68368) then 
 				Timer = timeEnding - currentTimeStamp
 			end
 		end
 	end
 
-	--CONVERT TO TEXT
-	
+	---------------------
+	-- CONVERT TO TEXT --
+	---------------------
+	local TimerTXT = ""
+
     if (Timer <= 0) then 
-        if Debuff_Choice == DebuffMe.Debuff_M then --no abbreviation if main debuff
+        if index == 1 then --no abbreviation if main debuff
             TimerTXT = "0"
         else
             TimerTXT = DebuffMe.Abbreviation[Debuff_Choice] 
         end
     else
-        if Debuff_Choice == DebuffMe.Debuff_M then --no decimal point if main debuff
+        if index == 1 then --no decimal point if main debuff
             TimerTXT = tostring(string.format("%.0f", Timer))
         else
 			if DebuffMe.SlowMode == true then
@@ -393,7 +414,7 @@ function DebuffMe.Calcul(Debuff_Choice)
 				TimerTXT = tostring(string.format("%.1f", Timer)) 
 			end
         end
-    end
+	end
     return TimerTXT
 end
 
@@ -406,71 +427,94 @@ end
 ----------------
 ---- UPDATE ----
 ----------------
+function DebuffMe.SetText(index, txt)
+	if index == 1 then
+		DebuffMeAlertMiddle:SetText(txt)
+	elseif index == 2 then
+		DebuffMeAlertLeft:SetText(txt)
+	elseif index == 3 then
+		DebuffMeAlertTop:SetText(txt)
+	elseif index == 4 then
+		DebuffMeAlertRight:SetText(txt)
+	end
+end
+
+function DebuffMe.SetHidden(index, hide)
+	if index == 1 then
+		DebuffMeAlertMiddle:SetHidden(hide)
+	elseif index == 2 then
+		DebuffMeAlertLeft:SetHidden(hide)
+	elseif index == 3 then
+		DebuffMeAlertTop:SetHidden(hide)
+	elseif index == 4 then
+		DebuffMeAlertRight:SetHidden(hide)
+	end
+end
+
+function DebuffMe.SetColor(index, immun)
+	if index == 1 then
+		if immun then 
+			DebuffMeAlertMiddle:SetColor(unpack{1,0,0})
+		else
+			DebuffMeAlertMiddle:SetColor(unpack{1,1,1}) --FFFFFF
+		end
+	elseif index == 2 then
+		if immun then 
+			DebuffMeAlertLeft:SetColor(unpack{1,0,0})
+		else
+			DebuffMeAlertLeft:SetColor(unpack{0,(170/255),1}) --00AAFF
+		end
+	elseif index == 3 then
+		if immun then 
+			DebuffMeAlertTop:SetColor(unpack{1,0,0})
+		else
+			DebuffMeAlertTop:SetColor(unpack{(56/255),(195/255),0}) --38C300
+		end
+	elseif index == 4 then
+		if immun then 
+			DebuffMeAlertRight:SetColor(unpack{1,0,0})
+		else
+			DebuffMeAlertRight:SetColor(unpack{(236/255),(60/255),0}) --EC3C00
+		end
+	end
+end
+
 function DebuffMe.Update()
-	--d("X: " ..DebuffMe.savedVariables.OffsetX .. " Y: " .. DebuffMe.savedVariables.OffsetY)
+	local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("reticleover", POWERTYPE_HEALTH)
+	local TXT = ""
+	
+	DebuffMeAlert:SetHidden(false)
+
+	if maxTargetHP >= 1000000 then --only if target got more than 1M hp
+		for index = 1, 4 do
+			if DebuffMe.Debuff_Show[index] ~= 1 then
+				TXT = DebuffMe.Calcul(index)
+
+				DebuffMe.SetText(index, TXT)
+				DebuffMe.SetHidden(index, false)
+
+				DebuffMe.SetColor(index, DebuffMe.flag_immunity)
+			else 
+				DebuffMe.SetHidden(index, true)
+			end
+		end
+	else
+		DebuffMeAlert:SetHidden(true)
+	end
+    
+end
+
+function DebuffMe.EventRegister()
+	
+	EVENT_MANAGER:UnregisterForUpdate(DebuffMe.name)
+
 	if (IsUnitInCombat("player")) then
-
-        local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("reticleover", POWERTYPE_HEALTH)
-		local TXT = ""
-		
-		DebuffMeAlert:SetHidden(false)
-
-        if maxTargetHP >= 1000000 then
-            if DebuffMe.Debuff_M ~= 1 then
-                TXT = DebuffMe.Calcul(DebuffMe.Debuff_M)
-                DebuffMeAlertMiddle:SetText(TXT)
-				DebuffMeAlertMiddle:SetHidden(false)
-				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertMiddle:SetColor(unpack{1,0,0}) --red if immun
-				else 
-					DebuffMeAlertMiddle:SetColor(unpack{1,1,1}) --original color else (FFFFFF)
-				end
-            else 
-                DebuffMeAlertMiddle:SetHidden(true)
-            end
-
-            if DebuffMe.Debuff_L ~= 1 then
-                TXT = DebuffMe.Calcul(DebuffMe.Debuff_L)
-                DebuffMeAlertLeft:SetText(TXT)
-				DebuffMeAlertLeft:SetHidden(false)
-				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertLeft:SetColor(unpack{1,0,0}) --red if immun
-				else 
-					DebuffMeAlertLeft:SetColor(unpack{0,(170/255),1}) --original color else (00AAFF)
-				end
-            else 
-                DebuffMeAlertLeft:SetHidden(true)
-            end
-
-            if DebuffMe.Debuff_T ~= 1 then
-                TXT = DebuffMe.Calcul(DebuffMe.Debuff_T)
-                DebuffMeAlertTop:SetText(TXT)
-                DebuffMeAlertTop:SetHidden(false)
-				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertTop:SetColor(unpack{1,0,0}) --red if immun
-				else 
-					DebuffMeAlertTop:SetColor(unpack{(56/255),(195/255),0}) --original color else (38C300)
-				end
-            else 
-                DebuffMeAlertTop:SetHidden(true)
-            end
-
-            if DebuffMe.Debuff_R ~= 1 then
-                TXT = DebuffMe.Calcul(DebuffMe.Debuff_R)
-                DebuffMeAlertRight:SetText(TXT)
-                DebuffMeAlertRight:SetHidden(false)
-				if (DebuffMe.flag_immunity == true) then
-					DebuffMeAlertRight:SetColor(unpack{1,0,0}) --red if immun
-				else 
-					DebuffMeAlertRight:SetColor(unpack{(236/255),(60/255),0}) --original color else (EC3C00)
-				end
-            else 
-                DebuffMeAlertRight:SetHidden(true)
-            end
-        else
-            DebuffMeAlert:SetHidden(true)
-        end
-    else
+		if DebuffMe.SlowMode == true then
+			EVENT_MANAGER:RegisterForUpdate(DebuffMe.name, 333, DebuffMe.Update)
+		else
+			EVENT_MANAGER:RegisterForUpdate(DebuffMe.name, 100, DebuffMe.Update)
+		end
+	else
         DebuffMeAlert:SetHidden(not DebuffMe.savedVariables.AlwaysShowAlert)
     end
 end
@@ -478,14 +522,7 @@ end
 --------------
 ---- INIT ----
 --------------
-
-function DebuffMe:Initialize()
-	--Settings
-	DebuffMe.CreateSettingsWindow()
-	--Saved Variables
-	DebuffMe.savedVariables = ZO_SavedVars:New("DebuffMeVariables", 1, nil, DebuffMe.Default)
-	EVENT_MANAGER:UnregisterForEvent(DebuffMe.name, EVENT_ADD_ON_LOADED)
-	--UI
+function DebuffMe.InitUI()
 	DebuffMeAlert:SetHidden(true)
 	DebuffMeAlert:ClearAnchors()
 	if (DebuffMe.savedVariables.OffsetX ~= 0) and (DebuffMe.savedVariables.OffsetY ~= 0) then 	--recover last position
@@ -502,21 +539,43 @@ function DebuffMe:Initialize()
 	DebuffMe.SetFontSize(DebuffMeAlertLeft, DebuffMe.savedVariables.FontSize)
 	DebuffMe.SetFontSize(DebuffMeAlertTop, DebuffMe.savedVariables.FontSize)
 	DebuffMe.SetFontSize(DebuffMeAlertRight, DebuffMe.savedVariables.FontSize)
+end
 
-	--Main
-    DebuffMe.Debuff_M = DebuffMe.savedVariables.Debuff_M
-    DebuffMe.Debuff_L = DebuffMe.savedVariables.Debuff_L
-    DebuffMe.Debuff_T = DebuffMe.savedVariables.Debuff_T
-	DebuffMe.Debuff_R = DebuffMe.savedVariables.Debuff_R
+function DebuffMe.GetSavedFor1_4()
+	DebuffMe.Debuff_Show[1] = DebuffMe.savedVariables.Debuff_M
+	DebuffMe.Debuff_Show[2] = DebuffMe.savedVariables.Debuff_L
+	DebuffMe.Debuff_Show[3] = DebuffMe.savedVariables.Debuff_T
+	DebuffMe.Debuff_Show[4] = DebuffMe.savedVariables.Debuff_R
+	DebuffMe.savedVariables.Debuff_Show = DebuffMe.Debuff_Show
 	
+	DebuffMe.savedVariables.Debuff_M = nil
+	DebuffMe.savedVariables.Debuff_L = nil 
+	DebuffMe.savedVariables.Debuff_T = nil 
+	DebuffMe.savedVariables.Debuff_R = nil 
+end
+
+function DebuffMe:Initialize()
+	--Settings
+	DebuffMe.CreateSettingsWindow()
+	--Saved Variables
+	DebuffMe.savedVariables = ZO_SavedVars:New("DebuffMeVariables", 1, nil, DebuffMe.Default)
+	--UI
+	DebuffMe.InitUI()
+	--Variables
+	DebuffMe.Debuff_Show = DebuffMe.savedVariables.Debuff_Show
 	DebuffMe.SlowMode = DebuffMe.savedVariables.SlowMode
-	
-	if DebuffMe.SlowMode == true then
-		EVENT_MANAGER:RegisterForUpdate(DebuffMe.name, 333, DebuffMe.Update)
-	else
-		EVENT_MANAGER:RegisterForUpdate(DebuffMe.name, 100, DebuffMe.Update)
+
+	if DebuffMe.savedVariables.Debuff_M ~= nil and DebuffMe.savedVariables.Debuff_L ~= nil 
+	and DebuffMe.savedVariables.Debuff_T ~= nil and DebuffMe.savedVariables.Debuff_R ~= nil then
+		--get the previous values
+		DebuffMe.GetSavedFor1_4()
 	end
-	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_RETICLE_TARGET_CHANGED, DebuffMe.Update)
+	
+	--Events
+	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_RETICLE_TARGET_CHANGED, DebuffMe.EventRegister)
+	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_PLAYER_ACTIVATED, DebuffMe.EventRegister)
+	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_PLAYER_COMBAT_STATE, DebuffMe.EventRegister)
+
 	EVENT_MANAGER:UnregisterForEvent(DebuffMe.name, EVENT_ADD_ON_LOADED)
 end
 
