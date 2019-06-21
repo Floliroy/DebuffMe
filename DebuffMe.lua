@@ -18,7 +18,7 @@ DebuffMe.DebuffList = {
     [7] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(81519)), --Minor Vulnerability
     [8] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62504)), --Minor Maim
 	[9] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
-	[10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(88565)), --Minor LifeSteal    
+	[10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(88575)), --Minor LifeSteal    
     [11] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
 	[12] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(64144)), --Minor Fracture
 	[13] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68588)), --Minor Breach
@@ -46,7 +46,7 @@ DebuffMe.TransitionTable = {
     [7] = 81519, --Minor Vulnerability
     [8] = 62504, --Minor Maim
 	[9] = 39100, --Minor MagSteal   
-	[10] = 88565, --Minor LifeSteal 
+	[10] = 88575, --Minor LifeSteal 
     [11] = 17945, --Weakening  
 	[12] = 64144, --Minor Fracture
 	[13] = 68588, --Minor Breach
@@ -69,7 +69,7 @@ DebuffMe.CustomAbilityNameWithID = {
 	[68359] = GetAbilityName(68359), --Minor Vulne (not IA)
     [68368] = GetAbilityName(62504), --Minor Maim
 	[39100] = GetAbilityName(39100), --Minor MagSteal    
-	[88565] = GetAbilityName(88565), --Minor LifeSteal    
+	[88575] = GetAbilityName(88575), --Minor LifeSteal    
     [17945] = GetAbilityName(17945), --Weakening  
 	[64144] = GetAbilityName(64144), --Minor Fracture  
 	[68588] = GetAbilityName(68588), --Minor Breach   
@@ -107,6 +107,7 @@ DebuffMe.Abbreviation = {
 }
 
 DebuffMe.flag_immunity = false
+DebuffMe.altarEndTime = 0
 ---------------------------
 ---- Variables Default ----
 ---------------------------
@@ -307,7 +308,7 @@ end
 ---- FONCTION ----
 ------------------
 function DebuffMe.DoesDebuffEquals(ID1, ID2)
-	if (GetFormattedAbilityNameWithID(ID1)) == (GetFormattedAbilityNameWithID(ID2)) then 
+	if GetFormattedAbilityNameWithID(ID1) == GetFormattedAbilityNameWithID(ID2) then 
 		return true
 	else
 		return false
@@ -332,7 +333,7 @@ function DebuffMe.Calcul(index)
 			end
 		else 
 			if DebuffMe.DoesDebuffEquals(abilityId, DebuffID) then
-				if Timer < timeEnding - currentTimeStamp then --ignore conflict when more than one player is applying the same debuff
+				if Timer <= timeEnding - currentTimeStamp then --ignore conflict when more than one player is applying the same debuff
 					Timer = timeEnding - currentTimeStamp
 				end
 			end
@@ -345,7 +346,7 @@ function DebuffMe.Calcul(index)
 		----------------
 		-- IMMUNITIES --
 		----------------
-	if (Timer <= 0) and (Debuff_Choice == 2) then --check target taunt immunity 
+	if Timer <= 0 and Debuff_Choice == 2 then --check target taunt immunity 
 		for i=1,GetNumBuffs("reticleover") do 
 			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
 			if DebuffMe.DoesDebuffEquals(abilityId, 52788) then 
@@ -354,7 +355,7 @@ function DebuffMe.Calcul(index)
 			end
 		end
 	end
-	if (Timer <= 0) and (Debuff_Choice == 6) then --check target offbalance immunity 
+	if Timer <= 0 and Debuff_Choice == 6 then --check target offbalance immunity 
 		for i=1,GetNumBuffs("reticleover") do 
 			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
 			if DebuffMe.DoesDebuffEquals(abilityId, 102771) then 
@@ -366,7 +367,7 @@ function DebuffMe.Calcul(index)
 		-------------------
 		-- VULNERABILITY --
 		-------------------
-	if (Timer <= 4) and (Debuff_Choice == 7) then --check minor vulnerability from shock
+	if Timer <= 4 and Debuff_Choice == 7 then --check minor vulnerability from shock
 		for i=1,GetNumBuffs("reticleover") do 
 			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
 			if DebuffMe.DoesDebuffEquals(abilityId, 68359) then 
@@ -374,7 +375,7 @@ function DebuffMe.Calcul(index)
 			end
 		end
 	end
-	if (Timer <= 8) and (Debuff_Choice == 7) then --check minor vulnerability from nb gap closer
+	if Timer <= 8 and Debuff_Choice == 7 then --check minor vulnerability from nb gap closer
 		for i=1,GetNumBuffs("reticleover") do 
 			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
 			if DebuffMe.DoesDebuffEquals(abilityId, 124806) then 
@@ -384,21 +385,32 @@ function DebuffMe.Calcul(index)
 			end
 		end
 	end
-	if (Timer <= 4) and (Debuff_Choice == 8) then --check minor main from chilled
+	if Timer <= 4 and Debuff_Choice == 8 then --check minor main from chilled
 		for i=1,GetNumBuffs("reticleover") do 
 			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
 			if DebuffMe.DoesDebuffEquals(abilityId, 68368) then 
 				Timer = timeEnding - currentTimeStamp
 			end
 		end
-	end
+	end	
+		---------------------
+		-- MINOR LIFESTEAL --
+		---------------------
+	if Debuff_Choice == 10 and Timer <= DebuffMe.altarEndTime - currentTimeStamp then --check minor lifesteal from altar
+		for i=1,GetNumBuffs("reticleover") do 
+			local _, _, _, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 80020) then --altar
+				Timer = DebuffMe.altarEndTime - currentTimeStamp
+			end
+		end
+	end	
 
 	---------------------
 	-- CONVERT TO TEXT --
 	---------------------
 	local TimerTXT = ""
 
-    if (Timer <= 0) then 
+    if Timer <= 0 then 
         if index == 1 then --no abbreviation if main debuff
             TimerTXT = "0"
         else
@@ -427,6 +439,15 @@ end
 ----------------
 ---- UPDATE ----
 ----------------
+function DebuffMe.AltarTimer(_, changeType, _, _, _, _, endTime, _, _, _, _, _, _, _, _, abilityId, _)
+	if changeType == COMBAT_UNIT_TYPE_PLAYER and abilityId == 39489 or 41967 or 41958 then
+		local currentTimeStamp = endTime - GetGameTimeMilliseconds() / 1000
+		if currentTimeStamp > 0 then
+			DebuffMe.altarEndTime = endTime
+		end
+	end 
+end
+
 function DebuffMe.SetText(index, txt)
 	if index == 1 then
 		DebuffMeAlertMiddle:SetText(txt)
@@ -486,7 +507,7 @@ function DebuffMe.Update()
 	DebuffMeAlert:SetHidden(false)
 
 	if maxTargetHP >= 1000000 then --only if target got more than 1M hp
-		for index = 1, 4 do
+		for index = 1, #DebuffMe.Debuff_Show do
 			if DebuffMe.Debuff_Show[index] ~= 1 then
 				TXT = DebuffMe.Calcul(index)
 
@@ -504,15 +525,15 @@ function DebuffMe.Update()
     
 end
 
-function DebuffMe.EventRegister()
-	
-	EVENT_MANAGER:UnregisterForUpdate(DebuffMe.name)
+function DebuffMe.EventRegister()	
 
-	if (IsUnitInCombat("player")) then
-		if DebuffMe.SlowMode == true then
-			EVENT_MANAGER:RegisterForUpdate(DebuffMe.name, 333, DebuffMe.Update)
+	EVENT_MANAGER:UnregisterForUpdate(DebuffMe.name .. "Update")
+
+	if IsUnitInCombat("player") then
+		if DebuffMe.SlowMode then
+			EVENT_MANAGER:RegisterForUpdate(DebuffMe.name .. "Update", 333, DebuffMe.Update)
 		else
-			EVENT_MANAGER:RegisterForUpdate(DebuffMe.name, 100, DebuffMe.Update)
+			EVENT_MANAGER:RegisterForUpdate(DebuffMe.name .. "Update", 100, DebuffMe.Update)
 		end
 	else
         DebuffMeAlert:SetHidden(not DebuffMe.savedVariables.AlwaysShowAlert)
@@ -522,6 +543,7 @@ end
 --------------
 ---- INIT ----
 --------------
+
 function DebuffMe.InitUI()
 	DebuffMeAlert:SetHidden(true)
 	DebuffMeAlert:ClearAnchors()
@@ -575,6 +597,12 @@ function DebuffMe:Initialize()
 	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_RETICLE_TARGET_CHANGED, DebuffMe.EventRegister)
 	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_PLAYER_ACTIVATED, DebuffMe.EventRegister)
 	EVENT_MANAGER:RegisterForEvent(DebuffMe.name, EVENT_PLAYER_COMBAT_STATE, DebuffMe.EventRegister)
+
+	local altarID = {39489, 41967, 41958}
+	for i = 1, #altarID do
+		EVENT_MANAGER:RegisterForEvent(DebuffMe.name .. "Altar" .. i, EVENT_EFFECT_CHANGED, DebuffMe.AltarTimer)
+		EVENT_MANAGER:AddFilterForEvent(DebuffMe.name .. "Altar" .. i, EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID, altarID[i])
+	end	
 
 	EVENT_MANAGER:UnregisterForEvent(DebuffMe.name, EVENT_ADD_ON_LOADED)
 end
