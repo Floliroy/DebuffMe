@@ -16,5 +16,7 @@ Lib/LibCustomTitles/LibTitleLocale.lua
 Lib/LibCustomTitles/LibCustomTitles.lua
 Lib/LibCustomTitles/Titles/Floliroy.lua
 
+DebuffMeData.lua
+DebuffMeMenu.lua
 DebuffMe.lua
 DebuffMe.xml

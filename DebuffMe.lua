@@ -1,4 +1,3 @@
-local LAM2 = LibStub:GetLibrary("LibAddonMenu-2.0")
 -----------------
 ---- Globals ----
 -----------------
@@ -8,106 +7,13 @@ local DebuffMe = DebuffMe
 DebuffMe.name = "DebuffMe"
 DebuffMe.version = "1.4.0"
 
-DebuffMe.DebuffList = {
-    [1] = "None",
-	[2] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(38541)), --Taunt
-	[3] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17906)), --Crusher
-	[4] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(75753)), --Alkosh
-	[5] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(31104)), --EngFlames
-    [6] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62988)), --OffBalance
-    [7] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(81519)), --Minor Vulnerability
-    [8] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62504)), --Minor Maim
-	[9] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
-	[10] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(88575)), --Minor LifeSteal    
-    [11] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
-	[12] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(64144)), --Minor Fracture
-	[13] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68588)), --Minor Breach
-	[14] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62484)), --Major Fracture
-	[15] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62485)), --Major Breach
-	[16] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(122397)), --Major Vulnerability
-	[17] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34384)), --Morag Tong
-	[18] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34734)), --Surprise Attack
-}
---52788 Taunt immunity
---102771 OffBalance immunity
---68359 Minor Vulne (not IA)
---68368 Mino Maim (not W+S)
---80020  Minor Lifesteal
---41958 Green Altar
---41967 Red Altar
-
-DebuffMe.TransitionTable = {
-	[1] = 0,
-	[2] = 38541, --Taunt
-	[3] = 17906, --Crusher
-	[4] = 75753, --Alkosh
-	[5] = 31104, --EngFlames
-    [6] = 62988, --OffBalance
-    [7] = 81519, --Minor Vulnerability
-    [8] = 62504, --Minor Maim
-	[9] = 39100, --Minor MagSteal   
-	[10] = 88575, --Minor LifeSteal 
-    [11] = 17945, --Weakening  
-	[12] = 64144, --Minor Fracture
-	[13] = 68588, --Minor Breach
-	[14] = 62484, --Major Fracture
-	[15] = 62485, --Major Breach
-	[16] = 122397, --Major Vulnerability
-	[17] = 34384, --Morag Tong
-	[18] = 34734, --Surprise Attack
-}
-
-DebuffMe.CustomAbilityNameWithID = {
-	[38541] = GetAbilityName(38541), --Taunt
-	[52788] = GetAbilityName(52788), --Taunt Immunity
-	[17906] = GetAbilityName(17906), --Crusher
-	[75753] = GetAbilityName(75753), --Alkosh
-	[31104] = GetAbilityName(31104), --EngFlames
-	[62988] = GetAbilityName(62988), --OffBalance
-	[102771] = GetAbilityName(102771), --OffBalance Immunity
-	[81519] = GetAbilityName(81519), --Minor Vulnerability
-	[68359] = GetAbilityName(68359), --Minor Vulne (not IA)
-    [68368] = GetAbilityName(62504), --Minor Maim
-	[39100] = GetAbilityName(39100), --Minor MagSteal    
-	[88575] = GetAbilityName(88575), --Minor LifeSteal    
-    [17945] = GetAbilityName(17945), --Weakening  
-	[64144] = GetAbilityName(64144), --Minor Fracture  
-	[68588] = GetAbilityName(68588), --Minor Breach   
-    [62484] = GetAbilityName(62484), --Major Fracture 
-	[62485] = GetAbilityName(62485), --Major Breach 
-	[122397] = GetAbilityName(122397), --Major Vulnerability 
-	[34384] = GetAbilityName(34384), --Morag Tong
-	[34734] = GetAbilityName(34734), --Surprise Attack
-}
-
-local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
-	local name = DebuffMe.CustomAbilityNameWithID[id] or zo_strformat(SI_ABILITY_NAME, GetAbilityName(id))
-	return name
-end 
-
-DebuffMe.Abbreviation = {
-    [1] = "",
-	[2] = "TN", --Taunt
-	[3] = "CR", --Crusher
-	[4] = "AL", --Alkosh
-	[5] = "EF", --EngFlames
-    [6] = "OB", --OffBalance
-    [7] = "IA", --Minor Vulnerability
-    [8] = "mM", --Minor Maim
-	[9] = "mS", --Minor MagSteal    
-	[10] = "mL", --Minor LifeSteal   
-    [11] = "WK", --Weakening  
-    [12] = "mF", --Minor Fracture
-	[13] = "mB", --Minor Breach
-	[14] = "MF", --Major Fracture
-	[15] = "MB", --Major Breach
-	[16] = "MV", --Major Vulnerability 
-	[17] = "MT", --Morag Tong
-	[18] = "SA", --Surprise Attack
-}
-
 DebuffMe.flag_immunity = false
 DebuffMe.altarEndTime = 0
+DebuffMe.CustomDataList = {
+	name = {},
+	id = {},
+	abbreviation = {},
+}
 ---------------------------
 ---- Variables Default ----
 ---------------------------
@@ -122,191 +28,21 @@ DebuffMe.Default = {
 	FontSize = 36,
 	Spacing = 10,
 	SlowMode = false,
+	CustomDataList = {
+		name = {},
+		id = {},
+		abbreviation = {},
+	},
 }
-
--------------------------
----- Settings Window ----
--------------------------
-function DebuffMe.CreateSettingsWindow()
-	local panelData = {
-		type = "panel",
-		name = "DebuffMe",
-		displayName = "Debuff|cec3c00Me|r",
-		author = "Floliroy",
-		version = DebuffMe.version,
-		slashCommand = "/dbuffme",
-		registerForRefresh = true,
-		registerForDefaults = true,
-	}
-	
-	local cntrlOptionsPanel = LAM2:RegisterAddonPanel("DebuffMe_Settings", panelData)
-	
-	local optionsData = {
-		[1] = {
-			type = "header",
-			name = "DebuffMe Settings",
-		},
-		[2] = {
-			type = "description",
-			text = "Choose here which debuff you want to show.",
-		},
-		[3] = {
-			type = "dropdown",
-			name = "Main Debuff (Middle White)",
-			tooltip = "No number after the decimal point, neither abbreviation if debuff at 0.",
-			choices = DebuffMe.DebuffList,
-			default = DebuffMe.DebuffList[2],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[1]] end,
-			setFunc = function(selected)
-				for index, name in ipairs(DebuffMe.DebuffList) do
-					if name == selected then
-						DebuffMe.savedVariables.Debuff_Show[1] = index
-						DebuffMe.Debuff_Show[1] = index
-						break
-					end
-				end
-			end,
-			scrollable = true,
-		},
-        [4] = {
-			type = "dropdown",
-			name = "Secondary Debuff (Left Blue)",
-			tooltip = "One number after the decimal point, and abbreviation if debuff at 0.",
-			choices = DebuffMe.DebuffList,
-			default = DebuffMe.DebuffList[4],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[2]] end,
-			setFunc = function(selected)
-				for index, name in ipairs(DebuffMe.DebuffList) do
-					if name == selected then
-						DebuffMe.savedVariables.Debuff_Show[2] = index
-						DebuffMe.Debuff_Show[2] = index
-						break
-					end
-				end
-			end,
-			scrollable = true,
-		},
-        [5] = {
-			type = "dropdown",
-			name = "Secondary Debuff (Top Green)",
-			tooltip = "One number after the decimal point, and abbreviation if debuff at 0.",
-			choices = DebuffMe.DebuffList,
-			default = DebuffMe.DebuffList[3],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[3]] end,
-			setFunc = function(selected)
-				for index, name in ipairs(DebuffMe.DebuffList) do
-					if name == selected then
-						DebuffMe.savedVariables.Debuff_Show[3] = index
-						DebuffMe.Debuff_Show[3] = index
-						break
-					end
-				end
-			end,
-			scrollable = true,
-		},
-        [6] = {
-			type = "dropdown",
-			name = "Secondary Debuff (Right Red)",
-			tooltip = "One number after the decimal point, and abbreviation if debuff at 0.",
-			choices = DebuffMe.DebuffList,
-			default = DebuffMe.DebuffList[5],
-			getFunc = function() return DebuffMe.DebuffList[DebuffMe.savedVariables.Debuff_Show[4]] end,
-			setFunc = function(selected)
-				for index, name in ipairs(DebuffMe.DebuffList) do
-					if name == selected then
-						DebuffMe.savedVariables.Debuff_Show[4] = index
-						DebuffMe.Debuff_Show[4] = index
-						break
-					end
-				end
-			end,
-			scrollable = true,
-		},
-        [7] = {
-			type = "header",
-			name = "DebuffMe Graphics",
-		},
-		[8] = {
-			type = "description",
-			text = "More coming soon !",
-		},
-		[9] = {
-			type = "button",
-			name = "Reset Position",
-			tooltip = "Reset the position of the timers at their initial position: center of your screen.",
-			func = function()
-				DebuffMe.savedVariables.OffsetX = 0
-				DebuffMe.savedVariables.OffsetY = 0
-				DebuffMeAlert:SetAnchor(CENTER, GuiRoot, CENTER, DebuffMe.savedVariables.OffsetX, DebuffMe.savedVariables.OffsetY)
-			end,
-			width = "half",
-		},
-        [10] = {
-			type = "checkbox",
-			name = "Unlock",
-			tooltip = "Use it to move the timers.",
-			default = false,
-			getFunc = function() return DebuffMe.savedVariables.AlwaysShowAlert end,
-			setFunc = function(newValue) 
-				DebuffMe.savedVariables.AlwaysShowAlert = newValue
-				DebuffMeAlert:SetHidden(not newValue)  
-			end,
-		},
-		[11] = {
-            type = "slider",
-            name = "Font Size",
-            tooltip = "Choose here the size of the text, the middle debuff will be a bit smaller.",
-            getFunc = function() return DebuffMe.savedVariables.FontSize end,
-            setFunc = function(newValue) 
-				DebuffMe.savedVariables.FontSize = newValue 
-				DebuffMe.SetFontSize(DebuffMeAlertMiddle, (newValue * 0.9))
-				DebuffMe.SetFontSize(DebuffMeAlertLeft, newValue)
-				DebuffMe.SetFontSize(DebuffMeAlertTop, newValue)
-				DebuffMe.SetFontSize(DebuffMeAlertRight, newValue)
-			end,
-            min = 20,
-            max = 72,
-            step = 2,
-            default = 36,
-            width = "full",
-		  },
-		  [12] = {
-            type = "slider",
-            name = "Spacing",
-            tooltip = "Choose here the spacing between the different timers.",
-            getFunc = function() return DebuffMe.savedVariables.Spacing end,
-            setFunc = function(newValue) 
-				DebuffMe.savedVariables.Spacing = newValue 
-				DebuffMeAlertLeft:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, -8*DebuffMe.savedVariables.Spacing, DebuffMe.savedVariables.Spacing)
-				DebuffMeAlertTop:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, 0, -6*DebuffMe.savedVariables.Spacing)
-				DebuffMeAlertRight:SetAnchor(CENTER, DebuffMeAlertMiddle, CENTER, 8*DebuffMe.savedVariables.Spacing, DebuffMe.savedVariables.Spacing)
-			end,
-            min = 3,
-            max = 30,
-            step = 1,
-            default = 10,
-            width = "full",
-		  },
-		  [13] = {
-			type = "checkbox",
-			name = "Slow Mode",
-			tooltip = "The addon will take less performance on your computer, but timers will not have any numbers after decimal points.",
-			default = false,
-			getFunc = function() return DebuffMe.savedVariables.SlowMode end,
-			setFunc = function(newValue) 
-				DebuffMe.savedVariables.SlowMode = newValue
-				DebuffMe.SlowMode = newValue
-				DebuffMe.EventRegister()
-			end,
-		},
-	}
-	
-	LAM2:RegisterOptionControls("DebuffMe_Settings", optionsData)
-end
 
 ------------------
 ---- FONCTION ----
 ------------------
+local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
+	local name = DebuffMe.CustomAbilityNameWithID[id] or zo_strformat(SI_ABILITY_NAME, GetAbilityName(id))
+	return name
+end 
+
 function DebuffMe.DoesDebuffEquals(ID1, ID2)
 	if GetFormattedAbilityNameWithID(ID1) == GetFormattedAbilityNameWithID(ID2) then 
 		return true
@@ -576,13 +312,49 @@ function DebuffMe.GetSavedFor1_4()
 	DebuffMe.savedVariables.Debuff_R = nil 
 end
 
+function DebuffMe.AddCustomDataList()
+	for i = 1, table.getn(DebuffMe.CustomDataList.name) do
+		table.insert(	DebuffMe.DebuffList, DebuffMe.CustomDataList.name[i]) 			--name
+		table.insert(	DebuffMe.TransitionTable, DebuffMe.CustomDataList.id[i]) 		--id
+		table.insert(	DebuffMe.CustomAbilityNameWithID, DebuffMe.CustomDataList.id[i], 
+						GetAbilityName(DebuffMe.CustomDataList.id[i])) 					--namewithid
+		table.insert(	DebuffMe.Abbreviation, DebuffMe.CustomDataList.abbreviation[i])	--abbreviation
+	end
+	if RemoveDebuff_dropdown ~= nil then
+		RemoveDebuff_dropdown:UpdateChoices()
+	end
+	if RightDebuff_dropdown ~= nil then
+		RightDebuff_dropdown:UpdateChoices()
+	end
+	if LeftDebuff_dropdown ~= nil then
+		LeftDebuff_dropdown:UpdateChoices()
+	end
+	if MainDebuff_dropdown ~= nil then
+		MainDebuff_dropdown:UpdateChoices()
+	end
+	if TopDebuff_dropdown ~= nil then
+		TopDebuff_dropdown:UpdateChoices()
+	end
+end
+
+function DebuffMe.Test()
+	
+end
+
 function DebuffMe:Initialize()
-	--Settings
-	DebuffMe.CreateSettingsWindow()
 	--Saved Variables
 	DebuffMe.savedVariables = ZO_SavedVars:New("DebuffMeVariables", 1, nil, DebuffMe.Default)
+
+	--Custom table
+	DebuffMe.CustomDataList = DebuffMe.savedVariables.CustomDataList
+	DebuffMe.AddCustomDataList()
+
+	--Settings
+	DebuffMe.CreateSettingsWindow()
+	
 	--UI
 	DebuffMe.InitUI()
+
 	--Variables
 	DebuffMe.Debuff_Show = DebuffMe.savedVariables.Debuff_Show
 	DebuffMe.SlowMode = DebuffMe.savedVariables.SlowMode
@@ -603,6 +375,9 @@ function DebuffMe:Initialize()
 		EVENT_MANAGER:RegisterForEvent(DebuffMe.name .. "Altar" .. i, EVENT_EFFECT_CHANGED, DebuffMe.AltarTimer)
 		EVENT_MANAGER:AddFilterForEvent(DebuffMe.name .. "Altar" .. i, EVENT_EFFECT_CHANGED, REGISTER_FILTER_ABILITY_ID, altarID[i])
 	end	
+
+	--Dev Part
+	SLASH_COMMANDS["/flotest"] = function() DebuffMe.Test() end
 
 	EVENT_MANAGER:UnregisterForEvent(DebuffMe.name, EVENT_ADD_ON_LOADED)
 end
