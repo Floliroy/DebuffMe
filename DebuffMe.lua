@@ -349,9 +349,9 @@ function DebuffMe.AddCustomDataList()
 	end
 end
 
-function DebuffMe.Test()
+--function DebuffMe.Test()
 	
-end
+--end
 
 function DebuffMe:Initialize()
 	--Saved Variables
@@ -389,7 +389,7 @@ function DebuffMe:Initialize()
 	end	
 
 	--Dev Part
-	SLASH_COMMANDS["/flotest"] = function() DebuffMe.Test() end
+	--SLASH_COMMANDS["/flotest"] = function() DebuffMe.Test() end
 
 	EVENT_MANAGER:UnregisterForEvent(DebuffMe.name, EVENT_ADD_ON_LOADED)
 end
