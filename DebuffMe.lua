@@ -5,7 +5,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.4.0"
+DebuffMe.version = "1.5.0"
 
 DebuffMe.flag_immunity = false
 DebuffMe.altarEndTime = 0
@@ -54,20 +54,21 @@ end
 function DebuffMe.Calcul(index)
 	local Debuff_Choice = DebuffMe.Debuff_Show[index]
 	local currentTimeStamp = GetGameTimeMilliseconds() / 1000
-	DebuffID = DebuffMe.TransitionTable[Debuff_Choice]
+	DebuffID = tonumber(DebuffMe.TransitionTable[Debuff_Choice])
 
     local Timer = 0
 	DebuffMe.flag_immunity = false
 	
 	for i=1, GetNumBuffs("reticleover") do --check all debuffs
 		local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, castByPlayer = GetUnitBuffInfo("reticleover",i)		
+		
 		if Debuff_Choice == 2 then --if taunt
 			if castByPlayer == true then
 				if DebuffMe.DoesDebuffEquals(abilityId, DebuffID) then 
 					Timer = timeEnding - currentTimeStamp
 				end
 			end
-		else 
+		else
 			if DebuffMe.DoesDebuffEquals(abilityId, DebuffID) then
 				if Timer <= timeEnding - currentTimeStamp then --ignore conflict when more than one player is applying the same debuff
 					Timer = timeEnding - currentTimeStamp
@@ -313,13 +314,24 @@ function DebuffMe.GetSavedFor1_4()
 end
 
 function DebuffMe.AddCustomDataList()
-	for i = 1, table.getn(DebuffMe.CustomDataList.name) do
+	--remove from base table
+	while #DebuffMe.DebuffList >= 19 do
+		for i = 19, #DebuffMe.DebuffList do
+			table.remove(DebuffMe.DebuffList, i)
+			table.remove(DebuffMe.TransitionTable, i)
+			table.remove(DebuffMe.Abbreviation, i)
+			table.remove(DebuffMe.CustomAbilityNameWithID, DebuffMe.TransitionTable[i])
+		end
+	end
+
+	for i = 1, #DebuffMe.CustomDataList.name do
 		table.insert(	DebuffMe.DebuffList, DebuffMe.CustomDataList.name[i]) 			--name
 		table.insert(	DebuffMe.TransitionTable, DebuffMe.CustomDataList.id[i]) 		--id
 		table.insert(	DebuffMe.CustomAbilityNameWithID, DebuffMe.CustomDataList.id[i], 
 						GetAbilityName(DebuffMe.CustomDataList.id[i])) 					--namewithid
 		table.insert(	DebuffMe.Abbreviation, DebuffMe.CustomDataList.abbreviation[i])	--abbreviation
 	end
+	
 	if RemoveDebuff_dropdown ~= nil then
 		RemoveDebuff_dropdown:UpdateChoices()
 	end

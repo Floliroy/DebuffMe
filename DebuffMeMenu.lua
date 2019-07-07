@@ -30,9 +30,9 @@ function DebuffMe.SearchForIdWithName(name)
             end
         end
 
-        d("|cffffffThe debuff|r |cec3c00" .. name .. "|r |cffffffdoes not exist, or can't be found.|r")
+        d("|cffffffDebuff|r|cec3c00Me:\n|r|cffffffThe debuff|r |cec3c00" .. name .. "|r |cffffffdoes not exist, or can't be found.|r")
     else
-        d("|cffffffYou need to type a debuff to add.|r")
+        d("|cffffffDebuff|r|cec3c00Me:\n|r|cffffffYou need to type a debuff to add.|r")
     end
 
     return -1
@@ -250,12 +250,12 @@ function DebuffMe.CreateSettingsWindow()
             func = function()
                 local id = DebuffMe.SearchForIdWithName(DebuffToAdd.name)
                 if id ~= -1 then
-                    table.insert(DebuffMe.CustomDataList.name, DebuffToAdd.name)
+                    table.insert(DebuffMe.CustomDataList.name, zo_strformat(SI_ABILITY_NAME, GetAbilityName(id)))
                     table.insert(DebuffMe.CustomDataList.id, id)
                     table.insert(DebuffMe.CustomDataList.abbreviation, DebuffToAdd.abbreviation)
                     DebuffMe.savedVariables.CustomDataList = DebuffMe.CustomDataList
 
-                    d("|cffffffThe debuff|r |cec3c00" .. DebuffToAdd.name .. " (" .. id .. ")|r |cffffffhas been added.|r")
+                    d("|cffffffDebuff|r|cec3c00Me:\n|r|cffffffThe debuff|r |cec3c00" .. zo_strformat(SI_ABILITY_NAME, GetAbilityName(id)) .. " (" .. id .. ")|r |cffffffhas been added.|r")
                     DebuffMe.AddCustomDataList()
                 end
             end,
@@ -288,18 +288,9 @@ function DebuffMe.CreateSettingsWindow()
             name = "Remove",
             tooltip = "Remove the debuff selected in the previous dropdown.",
             func = function()
-                if DebuffSelected ~= "" then
-                    --remove from base table
-                    for i = 1, table.getn(DebuffMe.DebuffList) do
-                        if DebuffMe.DebuffList[i] == DebuffMe.CustomDataList.name[DebuffSelected] then
-                            table.remove(DebuffMe.DebuffList, i)
-                            table.remove(DebuffMe.TransitionTable, i)
-                            table.remove(DebuffMe.Abbreviation, i)
-                        end
-                    end
-                    
+                if DebuffSelected ~= "" then                    
                     --Message in chat
-                    d(  "|cffffffThe debuff|r |cec3c00" .. DebuffMe.CustomDataList.name[DebuffSelected] .. " (" 
+                    d("|cffffffDebuff|r|cec3c00Me:\n|r|cffffffThe debuff|r |cec3c00" .. DebuffMe.CustomDataList.name[DebuffSelected] .. " (" 
                         .. DebuffMe.CustomDataList.id[DebuffSelected] .. ")|r |cffffffhas been removed.|r")
 
                     --remove from custom table
