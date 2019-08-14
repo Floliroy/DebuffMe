@@ -3,7 +3,7 @@
 ## APIVersion: 100028
 ## Author: Floliroy
 ## Version: 1.5.1
-## DependsOn: LibStub LibAddonMenu-2.0
+## DependsOn: LibAddonMenu-2.0
 ## SavedVariables: DebuffMeVariables
 
 ; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 

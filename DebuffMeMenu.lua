@@ -1,7 +1,7 @@
 DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
-local LAM2 = LibStub:GetLibrary("LibAddonMenu-2.0")
+local LAM2 = LibAddonMenu2
 
 local DebuffToAdd = {
     name = "",
