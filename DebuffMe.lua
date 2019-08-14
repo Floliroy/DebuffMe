@@ -5,7 +5,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.5.0"
+DebuffMe.version = "1.5.1"
 
 DebuffMe.flag_immunity = false
 DebuffMe.altarEndTime = 0

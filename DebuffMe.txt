@@ -1,8 +1,8 @@
 ﻿
 ## Title: Debuff|cec3c00Me|r
-## APIVersion: 100027
+## APIVersion: 100028
 ## Author: Floliroy
-## Version: 1.5.0
+## Version: 1.5.1
 ## DependsOn: LibStub LibAddonMenu-2.0
 ## SavedVariables: DebuffMeVariables
 
