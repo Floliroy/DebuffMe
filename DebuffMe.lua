@@ -5,7 +5,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.5.1"
+DebuffMe.version = "1.5.2"
 
 DebuffMe.flag_immunity = false
 DebuffMe.altarEndTime = 0
@@ -33,6 +33,7 @@ DebuffMe.Default = {
 		id = {},
 		abbreviation = {},
 	},
+	thresholdHP = 1,
 }
 
 ------------------
@@ -243,7 +244,7 @@ function DebuffMe.Update()
 	
 	DebuffMeAlert:SetHidden(false)
 
-	if maxTargetHP >= 1000000 then --only if target got more than 1M hp
+	if maxTargetHP > DebuffMe.thresholdHP * 1000000 then --only if target got more than 1M hp
 		for index = 1, #DebuffMe.Debuff_Show do
 			if DebuffMe.Debuff_Show[index] ~= 1 then
 				TXT = DebuffMe.Calcul(index)

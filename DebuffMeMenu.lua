@@ -144,6 +144,20 @@ function DebuffMe.CreateSettingsWindow()
             sort = "name-up",
             reference = "RightDebuff_dropdown",
 		},
+		{
+			type = "slider",
+			name = "HP Threshold",
+			tooltip = "The minimum target's max Health in Million for the tracker to be enabled.\nPut it to 0 if you always want it enabled.",
+			min = 0,
+			max = 30,
+			step = 1,
+			default = 1,
+			getFunc = function() return DebuffMe.savedVariables.thresholdHP end,
+			setFunc = function(newValue)
+				DebuffMe.savedVariables.thresholdHP = newValue
+				DebuffMe.thresholdHP = newValue
+				end,
+		},
         {
 			type = "header",
 			name = "DebuffMe Graphics",
