@@ -1,6 +1,6 @@
 ﻿
 ## Title: Debuff|cec3c00Me|r
-## APIVersion: 100028
+## APIVersion: 100029
 ## Author: Floliroy
 ## Version: 1.5.2
 ## DependsOn: LibAddonMenu-2.0
