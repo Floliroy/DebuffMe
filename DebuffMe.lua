@@ -102,6 +102,15 @@ function DebuffMe.Calcul(index)
 			end
 		end
 	end
+	if Timer <= 0 and Debuff_Choice == 16 then --check target major vulnerability immunity
+		for i=1,GetNumBuffs("reticleover") do 
+			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+			if DebuffMe.DoesDebuffEquals(abilityId, 132831) then
+				Timer = timeEnding - currentTimeStamp
+				DebuffMe.flag_immunity = true
+			end
+		end
+	end
 		-------------------
 		-- VULNERABILITY --
 		-------------------
