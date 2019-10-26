@@ -253,7 +253,7 @@ function DebuffMe.Update()
 	
 	DebuffMeAlert:SetHidden(false)
 
-	if maxTargetHP > DebuffMe.thresholdHP * 1000000 then --only if target got more than 1M hp
+	if maxTargetHP > DebuffMe.savedVariables.thresholdHP * 1000000 then --only if target got more than 1M hp
 		for index = 1, #DebuffMe.Debuff_Show do
 			if DebuffMe.Debuff_Show[index] ~= 1 then
 				TXT = DebuffMe.Calcul(index)
