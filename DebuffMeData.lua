@@ -73,11 +73,6 @@ DebuffMe.CustomAbilityNameWithID = {
 	[34734] = GetAbilityName(34734), --Surprise Attack
 }
 
-local function GetFormattedAbilityNameWithID(id)	--Fix to LUI extended conflict thank you Solinur and Wheels
-	local name = DebuffMe.CustomAbilityNameWithID[id] or zo_strformat(SI_ABILITY_NAME, GetAbilityName(id))
-	return name
-end 
-
 DebuffMe.Abbreviation = {
     [1] = "",
 	[2] = "TN", --Taunt
