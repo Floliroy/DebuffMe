@@ -22,7 +22,7 @@ DebuffMe.DebuffList = {
 	[18] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34734)), --Surprise Attack
 }
 --52788 Taunt immunity
---102771 OffBalance immunity
+--134599 OffBalance immunity
 --68359 Minor Vulne (not IA)
 --68368 Mino Maim (not W+S)
 --80020  Minor Lifesteal
@@ -57,7 +57,7 @@ DebuffMe.CustomAbilityNameWithID = {
 	[75753] = GetAbilityName(75753), --Alkosh
 	[31104] = GetAbilityName(31104), --EngFlames
 	[62988] = GetAbilityName(62988), --OffBalance
-	[102771] = GetAbilityName(102771), --OffBalance Immunity
+	[134599] = GetAbilityName(134599), --OffBalance Immunity
 	[81519] = GetAbilityName(81519), --Minor Vulnerability
 	[68359] = GetAbilityName(68359), --Minor Vulne (not IA)
     [68368] = GetAbilityName(62504), --Minor Maim

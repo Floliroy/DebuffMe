@@ -5,7 +5,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.5.2"
+DebuffMe.version = "1.6.0"
 
 DebuffMe.flag_immunity = false
 DebuffMe.altarEndTime = 0
@@ -96,7 +96,7 @@ function DebuffMe.Calcul(index)
 	if Timer <= 0 and Debuff_Choice == 6 then --check target offbalance immunity 
 		for i=1,GetNumBuffs("reticleover") do 
 			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 102771) then 
+			if DebuffMe.DoesDebuffEquals(abilityId, 134599) then 
 				Timer = timeEnding - currentTimeStamp
 				DebuffMe.flag_immunity = true
 			end
