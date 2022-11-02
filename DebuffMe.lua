@@ -5,7 +5,7 @@ DebuffMe = DebuffMe or {}
 local DebuffMe = DebuffMe
 
 DebuffMe.name = "DebuffMe"
-DebuffMe.version = "1.6.0"
+DebuffMe.version = "1.7"
 
 DebuffMe.flag_immunity = false
 DebuffMe.altarEndTime = 0
@@ -76,81 +76,63 @@ function DebuffMe.Calcul(index)
 				end
 			end
 		end
-	end
 
-	--------------------
-	-- SPECIAL TIMERS --
-	--------------------
+		--------------------
+		-- SPECIAL TIMERS --
+		--------------------
+
 		----------------
 		-- IMMUNITIES --
 		----------------
-	if Timer <= 0 and Debuff_Choice == 2 then --check target taunt immunity 
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 52788) then 
-				Timer = timeEnding - currentTimeStamp
-				DebuffMe.flag_immunity = true
-			end
+		--check target taunt immunity 
+		if DebuffMe.DoesDebuffEquals(abilityId, 52788) and Timer <= 0 and Debuff_Choice == 2 then 
+			Timer = timeEnding - currentTimeStamp
+			DebuffMe.flag_immunity = true
 		end
-	end
-	if Timer <= 0 and Debuff_Choice == 6 then --check target offbalance immunity 
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 134599) then 
-				Timer = timeEnding - currentTimeStamp
-				DebuffMe.flag_immunity = true
-			end
+		--check target offbalance immunity 
+		if DebuffMe.DoesDebuffEquals(abilityId, 134599) and Timer <= 0 and Debuff_Choice == 6 then 
+			Timer = timeEnding - currentTimeStamp
+			DebuffMe.flag_immunity = true
 		end
-	end
-	if Timer <= 0 and Debuff_Choice == 16 then --check target major vulnerability immunity
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 132831) then
-				Timer = timeEnding - currentTimeStamp
-				DebuffMe.flag_immunity = true
-			end
-		end
-	end
+		--check target major vulnerability immunity
+		--[[if DebuffMe.DoesDebuffEquals(abilityId, 132831) and Timer <= 0 and Debuff_Choice == 14 then
+			Timer = timeEnding - currentTimeStamp
+			DebuffMe.flag_immunity = true
+		end]]
+
 		-------------------
 		-- VULNERABILITY --
 		-------------------
-	if Timer <= 4 and Debuff_Choice == 7 then --check minor vulnerability from shock
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 68359) then 
+		--[[
+		--check minor vulnerability from nb gap closer
+		if DebuffMe.DoesDebuffEquals(abilityId, 124806) and Timer <= 10 and Debuff_Choice == 7 then 
+			if Timer <= timeEnding - currentTimeStamp then
 				Timer = timeEnding - currentTimeStamp
 			end
 		end
-	end
-	if Timer <= 8 and Debuff_Choice == 7 then --check minor vulnerability from nb gap closer
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 124806) then 
-				if Timer <= timeEnding - currentTimeStamp then
-					Timer = timeEnding - currentTimeStamp
-				end
+		--check minor vulnerability from shock
+		if DebuffMe.DoesDebuffEquals(abilityId, 68359) and Timer <= 4 and Debuff_Choice == 7 then 
+			if Timer <= timeEnding - currentTimeStamp then
+				Timer = timeEnding - currentTimeStamp
 			end
 		end
-	end
-	if Timer <= 4 and Debuff_Choice == 8 then --check minor main from chilled
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, timeEnding, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
+		--check minor main from chilled
+		if DebuffMe.DoesDebuffEquals(abilityId, 68368) and Timer <= 4 and Debuff_Choice == 8 then 
 			if DebuffMe.DoesDebuffEquals(abilityId, 68368) then 
 				Timer = timeEnding - currentTimeStamp
 			end
 		end
-	end	
+		]]
+
 		---------------------
 		-- MINOR LIFESTEAL --
 		---------------------
-	if Debuff_Choice == 10 and Timer <= DebuffMe.altarEndTime - currentTimeStamp then --check minor lifesteal from altar
-		for i=1,GetNumBuffs("reticleover") do 
-			local _, _, _, _, _, _, _, _, _, _, abilityId, _, _ = GetUnitBuffInfo("reticleover",i)
-			if DebuffMe.DoesDebuffEquals(abilityId, 80020) then --altar
-				Timer = DebuffMe.altarEndTime - currentTimeStamp
-			end
+		--check minor lifesteal from altar
+		if DebuffMe.DoesDebuffEquals(abilityId, 80020) and Debuff_Choice == 10 and Timer <= DebuffMe.altarEndTime - currentTimeStamp then --altar
+			Timer = DebuffMe.altarEndTime - currentTimeStamp
 		end
-	end	
+		
+	end
 
 	---------------------
 	-- CONVERT TO TEXT --
@@ -325,8 +307,8 @@ end
 
 function DebuffMe.AddCustomDataList()
 	--remove from base table
-	while #DebuffMe.DebuffList >= 19 do
-		for i = 19, #DebuffMe.DebuffList do
+	while #DebuffMe.DebuffList >= 21 do
+		for i = 21, #DebuffMe.DebuffList do
 			table.remove(DebuffMe.DebuffList, i)
 			table.remove(DebuffMe.TransitionTable, i)
 			table.remove(DebuffMe.Abbreviation, i)

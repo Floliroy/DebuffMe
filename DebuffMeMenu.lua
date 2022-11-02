@@ -48,7 +48,7 @@ function DebuffMe.CreateSettingsWindow()
 		displayName = "Debuff|cec3c00Me|r",
 		author = "Floliroy",
 		version = DebuffMe.version,
-		slashCommand = "/dbuffme",
+		slashCommand = "/debuffme",
 		registerForRefresh = true,
 		registerForDefaults = true,
 	}
