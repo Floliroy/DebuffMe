@@ -51,26 +51,26 @@ DebuffMe.TransitionTable = {
 }
 
 DebuffMe.CustomAbilityNameWithID = {
-	[38541] = GetAbilityName(38541), --Taunt
-	[52788] = GetAbilityName(52788), --Taunt Immunity
-	[17906] = GetAbilityName(17906), --Crusher
-	[75753] = GetAbilityName(75753), --Alkosh
-	[31104] = GetAbilityName(31104), --EngFlames
-	[62988] = GetAbilityName(62988), --OffBalance
-	[134599] = GetAbilityName(134599), --OffBalance Immunity
-	[81519] = GetAbilityName(81519), --Minor Vulnerability
-	[68359] = GetAbilityName(68359), --Minor Vulne (not IA)
-    [68368] = GetAbilityName(62504), --Minor Maim
-	[39100] = GetAbilityName(39100), --Minor MagSteal    
-	[88575] = GetAbilityName(88575), --Minor LifeSteal    
-    [17945] = GetAbilityName(17945), --Weakening  
-	[64144] = GetAbilityName(64144), --Minor Fracture  
-	[68588] = GetAbilityName(68588), --Minor Breach   
-    [62484] = GetAbilityName(62484), --Major Fracture 
-	[62485] = GetAbilityName(62485), --Major Breach 
-	[122397] = GetAbilityName(122397), --Major Vulnerability 
-	[34384] = GetAbilityName(34384), --Morag Tong
-	[34734] = GetAbilityName(34734), --Surprise Attack
+	[38541] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(38541)), --Taunt
+	[52788] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(52788)), --Taunt Immunity
+	[17906] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17906)), --Crusher
+	[75753] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(75753)), --Alkosh
+	[31104] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(31104)), --EngFlames
+	[62988] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62988)), --OffBalance
+	[134599] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(134599)), --OffBalance Immunity
+	[81519] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(81519)), --Minor Vulnerability
+	[68359] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68359)), --Minor Vulne (not IA)
+    [68368] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62504)), --Minor Maim
+	[39100] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(39100)), --Minor MagSteal    
+	[88575] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(88575)), --Minor LifeSteal    
+    [17945] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(17945)), --Weakening  
+	[64144] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(64144)), --Minor Fracture  
+	[68588] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(68588)), --Minor Breach   
+    [62484] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62484)), --Major Fracture 
+	[62485] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(62485)), --Major Breach 
+	[122397] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(122397)), --Major Vulnerability 
+	[34384] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34384)), --Morag Tong
+	[34734] = zo_strformat(SI_ABILITY_NAME, GetAbilityName(34734)), --Surprise Attack
 }
 
 DebuffMe.Abbreviation = {
